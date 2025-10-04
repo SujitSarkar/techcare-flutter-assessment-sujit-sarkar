@@ -6,7 +6,9 @@ class ApiConfig {
 
   // API Endpoints
   static const String categoriesEndpoint = 'categories';
+  static const String transactionsEndpoint = 'transactions';
 
   // Full URLs
   static String get categoriesUrl => '$baseUrl/$categoriesEndpoint';
+  static String get transactionsUrl => '$baseUrl/$transactionsEndpoint';
 }

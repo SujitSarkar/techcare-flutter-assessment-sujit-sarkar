@@ -6,9 +6,13 @@ import 'package:take_home/core/theme/app_theme.dart';
 import 'package:take_home/core/config/dio_config.dart';
 
 import 'package:take_home/data/datasources/category_remote_datasource.dart';
+import 'package:take_home/data/datasources/transaction_remote_datasource.dart';
 import 'package:take_home/data/repositories/category_repository_impl.dart';
+import 'package:take_home/data/repositories/transaction_repository_impl.dart';
 import 'package:take_home/domain/repositories/category_repository.dart';
+import 'package:take_home/domain/repositories/transaction_repository.dart';
 import 'package:take_home/domain/usecases/get_categories.dart';
+import 'package:take_home/domain/usecases/get_transactions.dart';
 import 'package:take_home/presentation/analytics/bloc/analytics_bloc.dart';
 import 'package:take_home/presentation/bottom_nav_bar/bloc/bottom_nav_bar_bloc.dart';
 import 'package:take_home/presentation/bottom_nav_bar/pages/bottom_nav_bar.dart';
@@ -34,16 +38,23 @@ class _TakeHomeAppState extends State<TakeHomeApp> {
           create: (context) =>
               CategoryRepositoryImpl(remoteDataSource: CategoryRemoteDataSourceImpl(dio: DioConfig.instance)),
         ),
+        RepositoryProvider<TransactionRepository>(
+          create: (context) =>
+              TransactionRepositoryImpl(remoteDataSource: TransactionRemoteDataSourceImpl(dio: DioConfig.instance)),
+        ),
       ],
       child: MultiBlocProvider(
         providers: [
-          BlocProvider<BottomNavBarBloc>(create: (context) => BottomNavBarBloc()),
-          BlocProvider<DashboardBloc>(create: (context) => DashboardBloc()),
-          BlocProvider<AnalyticsBloc>(create: (context) => AnalyticsBloc()),
-          BlocProvider<TransactionsBloc>(create: (context) => TransactionsBloc()),
           BlocProvider<CategoryBloc>(
             create: (context) => CategoryBloc(getCategories: GetCategories(context.read<CategoryRepository>())),
           ),
+          BlocProvider<BottomNavBarBloc>(create: (context) => BottomNavBarBloc()),
+          BlocProvider<DashboardBloc>(create: (context) => DashboardBloc()),
+          BlocProvider<TransactionsBloc>(
+            create: (context) =>
+                TransactionsBloc(getTransactions: GetTransactions(repository: context.read<TransactionRepository>())),
+          ),
+          BlocProvider<AnalyticsBloc>(create: (context) => AnalyticsBloc()),
         ],
         child: MaterialApp(
           debugShowCheckedModeBanner: false,

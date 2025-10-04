@@ -4,6 +4,7 @@ class AppColors {
   AppColors._();
 
   static const Color primaryColor = Color(0xff10A6ED);
+  static const Color successColor = Colors.green;
   static const Color errorColor = Color(0xffFF0000);
   static const Color warningColor = Color(0xffD35500);
   static const Color lightCardColor = Colors.white;
