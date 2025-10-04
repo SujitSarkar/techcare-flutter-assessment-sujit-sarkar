@@ -19,7 +19,7 @@ class BottomNavBar extends StatelessWidget {
         return Scaffold(
           body: IndexedStack(
             index: currentIndex,
-            children: const [DashboardPage(), AnalyticsPage(), TransactionsPage()],
+            children: const [DashboardPage(), TransactionsPage(), AnalyticsPage()],
           ),
           bottomNavigationBar: BottomNavigationBar(
             currentIndex: currentIndex,
@@ -28,8 +28,8 @@ class BottomNavBar extends StatelessWidget {
             },
             items: const [
               BottomNavigationBarItem(icon: Icon(Icons.home), label: AppStrings.home),
-              BottomNavigationBarItem(icon: Icon(Icons.analytics), label: AppStrings.analytics),
               BottomNavigationBarItem(icon: Icon(Icons.list), label: AppStrings.transactions),
+              BottomNavigationBarItem(icon: Icon(Icons.analytics), label: AppStrings.analytics),
             ],
           ),
         );
