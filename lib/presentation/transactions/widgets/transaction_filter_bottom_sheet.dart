@@ -303,11 +303,11 @@ class _TransactionFilterBottomSheetState extends State<TransactionFilterBottomSh
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              '${AppStrings.minAmount}: \$${_tempMinAmount.toStringAsFixed(0)}',
+              '${AppStrings.minAmount}: ${AppStrings.currencySymbol} ${_tempMinAmount.toStringAsFixed(0)}',
               style: Theme.of(context).textTheme.bodyMedium,
             ),
             Text(
-              '${AppStrings.maxAmount}: \$${_tempMaxAmount.toStringAsFixed(0)}',
+              '${AppStrings.maxAmount}: ${AppStrings.currencySymbol} ${_tempMaxAmount.toStringAsFixed(0)}',
               style: Theme.of(context).textTheme.bodyMedium,
             ),
           ],

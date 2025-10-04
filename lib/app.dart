@@ -13,6 +13,9 @@ import 'package:take_home/domain/repositories/category_repository.dart';
 import 'package:take_home/domain/repositories/transaction_repository.dart';
 import 'package:take_home/domain/usecases/get_categories.dart';
 import 'package:take_home/domain/usecases/get_transactions.dart';
+import 'package:take_home/domain/usecases/add_transaction.dart';
+import 'package:take_home/domain/usecases/update_transaction.dart';
+import 'package:take_home/domain/usecases/delete_transaction.dart';
 import 'package:take_home/presentation/analytics/bloc/analytics_bloc.dart';
 import 'package:take_home/presentation/bottom_nav_bar/bloc/bottom_nav_bar_bloc.dart';
 import 'package:take_home/presentation/bottom_nav_bar/pages/bottom_nav_bar.dart';
@@ -51,8 +54,12 @@ class _TakeHomeAppState extends State<TakeHomeApp> {
           BlocProvider<BottomNavBarBloc>(create: (context) => BottomNavBarBloc()),
           BlocProvider<DashboardBloc>(create: (context) => DashboardBloc()),
           BlocProvider<TransactionsBloc>(
-            create: (context) =>
-                TransactionsBloc(getTransactions: GetTransactions(repository: context.read<TransactionRepository>())),
+            create: (context) => TransactionsBloc(
+              getTransactions: GetTransactions(repository: context.read<TransactionRepository>()),
+              addTransaction: AddTransaction(repository: context.read<TransactionRepository>()),
+              updateTransaction: UpdateTransaction(repository: context.read<TransactionRepository>()),
+              deleteTransaction: DeleteTransaction(repository: context.read<TransactionRepository>()),
+            ),
           ),
           BlocProvider<AnalyticsBloc>(create: (context) => AnalyticsBloc()),
         ],

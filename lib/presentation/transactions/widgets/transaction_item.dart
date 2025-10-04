@@ -4,14 +4,14 @@ import 'package:take_home/core/constants/app_color.dart';
 import 'package:take_home/core/constants/app_strings.dart';
 import 'package:take_home/core/utils/utils.dart';
 import 'package:take_home/domain/entities/transaction.dart';
-import 'package:take_home/presentation/transactions/widgets/transaction_details_modal.dart';
 
 class TransactionItem extends StatelessWidget {
   final Transaction transaction;
   final VoidCallback? onEdit;
   final VoidCallback? onDelete;
+  final VoidCallback? onTap;
 
-  const TransactionItem({super.key, required this.transaction, this.onEdit, this.onDelete});
+  const TransactionItem({super.key, required this.transaction, this.onEdit, this.onDelete, this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -34,11 +34,13 @@ class TransactionItem extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Icon(Icons.edit, color: theme.colorScheme.onPrimary),
       ),
-      onDismissed: (direction) {
+      confirmDismiss: (direction) async {
         if (direction == DismissDirection.startToEnd) {
           onDelete?.call();
+          return false;
         } else {
           onEdit?.call();
+          return false;
         }
       },
       child: Container(
@@ -56,7 +58,7 @@ class TransactionItem extends StatelessWidget {
           ],
         ),
         child: InkWell(
-          onTap: () => _showTransactionDetails(context),
+          onTap: () => onTap?.call(),
           borderRadius: BorderRadius.circular(12),
           child: ListTile(
             contentPadding: const EdgeInsets.all(16),
@@ -113,12 +115,9 @@ class TransactionItem extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Hero(
-                  tag: 'amount_${transaction.id}',
-                  child: Text(
-                    '\$${NumberFormat('#,##0.00').format(transaction.amount ?? 0.0)}',
-                    style: theme.textTheme.titleMedium?.copyWith(color: amountColor, fontWeight: FontWeight.bold),
-                  ),
+                Text(
+                  '${AppStrings.currencySymbol} ${NumberFormat('#,##0.00').format(transaction.amount ?? 0.0)}',
+                  style: theme.textTheme.titleMedium?.copyWith(color: amountColor, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 4),
                 Container(
@@ -137,14 +136,6 @@ class TransactionItem extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-
-  void _showTransactionDetails(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (context) => TransactionDetailsModal(transaction: transaction, onEdit: onEdit, onDelete: onDelete),
     );
   }
 }

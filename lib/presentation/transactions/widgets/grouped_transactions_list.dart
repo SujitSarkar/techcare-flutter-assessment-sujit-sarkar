@@ -10,8 +10,9 @@ class GroupedTransactionsList extends StatelessWidget {
   final bool isLoadingMore;
   final ScrollController? scrollController;
   final VoidCallback? onLoadMore;
-  final VoidCallback? onEditTransaction;
-  final VoidCallback? onDeleteTransaction;
+  final Function(Transaction)? onEditTransaction;
+  final Function(Transaction)? onTap;
+  final Function(String)? onDeleteTransaction;
 
   const GroupedTransactionsList({
     super.key,
@@ -20,6 +21,7 @@ class GroupedTransactionsList extends StatelessWidget {
     this.scrollController,
     this.onLoadMore,
     this.onEditTransaction,
+    this.onTap,
     this.onDeleteTransaction,
   });
 
@@ -28,6 +30,7 @@ class GroupedTransactionsList extends StatelessWidget {
     final groupedTransactions = _groupTransactionsByDate(transactions);
 
     return ListView.builder(
+      padding: const EdgeInsets.only(bottom: 60),
       controller: scrollController,
       itemCount: groupedTransactions.length + (isLoadingMore ? 1 : 0),
       itemBuilder: (context, index) {
@@ -61,8 +64,12 @@ class GroupedTransactionsList extends StatelessWidget {
             ),
             // Transactions for this date
             ...transactionsForDate.map(
-              (transaction) =>
-                  TransactionItem(transaction: transaction, onEdit: onEditTransaction, onDelete: onDeleteTransaction),
+              (transaction) => TransactionItem(
+                transaction: transaction,
+                onEdit: () => onEditTransaction?.call(transaction),
+                onDelete: () => onDeleteTransaction?.call(transaction.id ?? ''),
+                onTap: () => onTap?.call(transaction),
+              ),
             ),
           ],
         );

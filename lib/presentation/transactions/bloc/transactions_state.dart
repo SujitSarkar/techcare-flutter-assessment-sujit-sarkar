@@ -12,6 +12,7 @@ class TransactionsInitialState extends TransactionsState {}
 class TransactionsLoadingState extends TransactionsState {}
 
 class TransactionsLoadedState extends TransactionsState {
+  final bool isLoading;
   final List<Transaction> transactions;
   final List<Transaction> filteredTransactions;
   final int currentPage;
@@ -26,6 +27,7 @@ class TransactionsLoadedState extends TransactionsState {
   final TransactionType? transactionType;
 
   const TransactionsLoadedState({
+    this.isLoading = false,
     required this.transactions,
     required this.filteredTransactions,
     this.currentPage = 1,
@@ -42,6 +44,7 @@ class TransactionsLoadedState extends TransactionsState {
 
   @override
   List<Object> get props => [
+    isLoading,
     transactions,
     filteredTransactions,
     currentPage,
@@ -57,6 +60,7 @@ class TransactionsLoadedState extends TransactionsState {
   ];
 
   TransactionsLoadedState copyWith({
+    bool? isLoading,
     List<Transaction>? transactions,
     List<Transaction>? filteredTransactions,
     int? currentPage,
@@ -71,6 +75,7 @@ class TransactionsLoadedState extends TransactionsState {
     TransactionType? transactionType,
   }) {
     return TransactionsLoadedState(
+      isLoading: isLoading ?? this.isLoading,
       transactions: transactions ?? this.transactions,
       filteredTransactions: filteredTransactions ?? this.filteredTransactions,
       currentPage: currentPage ?? this.currentPage,
@@ -110,4 +115,31 @@ class TransactionsEmptyState extends TransactionsState {
 
   @override
   List<Object> get props => [];
+}
+
+class TransactionAddedState extends TransactionsState {
+  final Transaction transaction;
+
+  const TransactionAddedState({required this.transaction});
+
+  @override
+  List<Object> get props => [transaction];
+}
+
+class TransactionUpdatedState extends TransactionsState {
+  final Transaction transaction;
+
+  const TransactionUpdatedState({required this.transaction});
+
+  @override
+  List<Object> get props => [transaction];
+}
+
+class TransactionDeletedState extends TransactionsState {
+  final String transactionId;
+
+  const TransactionDeletedState({required this.transactionId});
+
+  @override
+  List<Object> get props => [transactionId];
 }

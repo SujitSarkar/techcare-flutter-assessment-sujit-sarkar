@@ -103,3 +103,30 @@ class ResetFiltersEvent extends TransactionsEvent {
   @override
   List<Object> get props => [];
 }
+
+class AddTransactionEvent extends TransactionsEvent {
+  final Transaction transaction;
+
+  const AddTransactionEvent({required this.transaction});
+
+  @override
+  List<Object> get props => [transaction];
+}
+
+class UpdateTransactionEvent extends TransactionsEvent {
+  final Transaction transaction;
+
+  const UpdateTransactionEvent({required this.transaction});
+
+  @override
+  List<Object> get props => [transaction];
+}
+
+class DeleteTransactionEvent extends TransactionsEvent {
+  final String transactionId;
+
+  const DeleteTransactionEvent({required this.transactionId});
+
+  @override
+  List<Object> get props => [transactionId];
+}

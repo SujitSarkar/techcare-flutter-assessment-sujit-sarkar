@@ -10,6 +10,8 @@ class AppStrings {
   static const String searchTransactionsHint = 'Search here...';
   static const String somethingWentWrong = 'Something went wrong';
   static const String retry = 'Retry';
+  static const String addIncome = 'Add Income';
+  static const String addExpense = 'Add Expense';
 
   // Transaction Empty State
   static const String noTransactionsYet = 'No transactions yet';
@@ -78,4 +80,43 @@ class AppStrings {
 
   // Error Messages
   static const String failedToFetchCategories = 'Failed to fetch categories: ';
+
+  // Success Messages
+  static const String transactionAddedSuccessfully = 'Transaction added successfully';
+  static const String transactionUpdatedSuccessfully = 'Transaction updated successfully';
+  static const String transactionDeletedSuccessfully = 'Transaction deleted successfully';
+
+  // Currency
+  static const String currencySymbol = 'BDT';
+
+  // Add Transaction Screen
+  static const String addTransaction = 'Add Transaction';
+  static const String amount = 'Amount';
+  static const String enterAmount = 'Enter amount';
+  static const String transactionTypeIncome = 'Income';
+  static const String transactionTypeExpense = 'Expense';
+  static const String selectCategory = 'Select Category';
+  static const String transactionTitle = 'Transaction Title';
+  static const String enterTitle = 'Enter transaction title';
+  static const String transactionDescription = 'Description (Optional)';
+  static const String enterDescription = 'Enter description';
+  static const String selectDate = 'Select Date';
+  static const String selectTime = 'Select Time (Optional)';
+  static const String save = 'Save';
+  static const String saving = 'Saving...';
+
+  // Edit Transaction Screen
+  static const String editTransaction = 'Edit Transaction';
+  static const String update = 'Update';
+  static const String updating = 'Updating...';
+
+  // Validation Messages
+  static const String amountRequired = 'Amount is required';
+  static const String amountMustBeGreaterThanZero = 'Amount must be greater than zero';
+  static const String titleRequired = 'Title is required';
+  static const String titleMaxLength = 'Title cannot exceed 100 characters';
+  static const String descriptionMaxLength = 'Description cannot exceed 500 characters';
+  static const String categoryRequired = 'Please select a category';
+  static const String dateCannotBeInFuture = 'Date cannot be in the future';
+  static const String invalidAmount = 'Please enter a valid amount';
 }

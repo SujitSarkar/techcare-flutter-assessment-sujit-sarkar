@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 
 import 'package:take_home/core/constants/app_strings.dart';
 import 'package:take_home/core/utils/utils.dart';
+import 'package:take_home/core/widgets/confirmation_dialog.dart';
 import 'package:take_home/domain/entities/transaction.dart';
 
 class TransactionDetailsModal extends StatelessWidget {
@@ -55,39 +56,36 @@ class TransactionDetailsModal extends StatelessWidget {
               children: [
                 // Hero Animation for Amount Display
                 Center(
-                  child: Hero(
-                    tag: 'amount_${transaction.id}',
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 20),
-                      decoration: BoxDecoration(
-                        color: amountColor.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: amountColor.withValues(alpha: 0.3), width: 2),
-                      ),
-                      child: Column(
-                        children: [
-                          Text(
-                            '\$${NumberFormat('#,##0.00').format(transaction.amount ?? 0.0)}',
-                            style: theme.textTheme.headlineLarge?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: amountColor,
-                              fontSize: 36,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 20),
+                    decoration: BoxDecoration(
+                      color: amountColor.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: amountColor.withValues(alpha: 0.3), width: 2),
+                    ),
+                    child: Column(
+                      children: [
+                        Text(
+                          '${AppStrings.currencySymbol} ${NumberFormat('#,##0.00').format(transaction.amount ?? 0.0)}',
+                          style: theme.textTheme.headlineLarge?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: amountColor,
+                            fontSize: 36,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                          decoration: BoxDecoration(color: amountColor, borderRadius: BorderRadius.circular(20)),
+                          child: Text(
+                            isIncome ? AppStrings.income : AppStrings.expense,
+                            style: theme.textTheme.labelLarge?.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
-                          const SizedBox(height: 8),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-                            decoration: BoxDecoration(color: amountColor, borderRadius: BorderRadius.circular(20)),
-                            child: Text(
-                              isIncome ? AppStrings.income : AppStrings.expense,
-                              style: theme.textTheme.labelLarge?.copyWith(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -151,7 +149,15 @@ class TransactionDetailsModal extends StatelessWidget {
               const SizedBox(width: 16),
               Expanded(
                 child: ElevatedButton.icon(
-                  onPressed: () => _showDeleteConfirmation(context),
+                  onPressed: () {
+                    ConfirmationDialog.showDeleteTransactionConfirmation(
+                      context,
+                      onConfirm: () {
+                        Navigator.of(context).pop();
+                        onDelete?.call();
+                      },
+                    );
+                  },
                   icon: const Icon(Icons.delete),
                   label: const Text(AppStrings.delete),
                   style: ElevatedButton.styleFrom(
@@ -310,39 +316,6 @@ class TransactionDetailsModal extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-
-  void _showDeleteConfirmation(BuildContext context) {
-    final theme = Theme.of(context);
-
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(
-          AppStrings.deleteTransaction,
-          style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
-        ),
-        content: Text(AppStrings.deleteConfirmationMessage, style: theme.textTheme.bodyMedium),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text(AppStrings.cancel, style: TextStyle(color: theme.colorScheme.onSurfaceVariant)),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.of(context).pop(); // Close confirmation dialog
-              Navigator.of(context).pop(); // Close details modal
-              onDelete?.call();
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: theme.colorScheme.error,
-              foregroundColor: theme.colorScheme.onError,
-            ),
-            child: const Text(AppStrings.delete),
-          ),
-        ],
-      ),
     );
   }
 }

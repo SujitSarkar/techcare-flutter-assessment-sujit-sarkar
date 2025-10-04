@@ -1,12 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
+import 'package:take_home/core/constants/app_color.dart';
 
 import 'package:take_home/core/constants/app_strings.dart';
 import 'package:take_home/core/utils/debouncer.dart';
+import 'package:take_home/core/widgets/confirmation_dialog.dart';
+import 'package:take_home/core/widgets/loading_mask.dart';
 import 'package:take_home/domain/entities/transaction.dart';
 import 'package:take_home/presentation/category/bloc/category_bloc.dart';
 import 'package:take_home/presentation/transactions/bloc/transactions_bloc.dart';
+import 'package:take_home/presentation/transactions/pages/add_transaction_page.dart';
+import 'package:take_home/presentation/transactions/pages/edit_transaction_page.dart';
 import 'package:take_home/presentation/transactions/widgets/grouped_transactions_list.dart';
+import 'package:take_home/presentation/transactions/widgets/transaction_details_modal.dart';
 import 'package:take_home/presentation/transactions/widgets/transaction_empty_state.dart';
 import 'package:take_home/presentation/transactions/widgets/transaction_filter_bottom_sheet.dart';
 import 'package:take_home/presentation/transactions/widgets/transaction_shimmer.dart';
@@ -61,7 +68,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
 
   void _onScroll() {
     if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 200) {
-      context.read<TransactionsBloc>().add(
+      _transactionBloc.add(
         LoadMoreTransactionsEvent(
           searchQuery: _searchQuery.value,
           startDate: _startDate,
@@ -76,7 +83,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
   }
 
   void _onRefresh() {
-    context.read<TransactionsBloc>().add(
+    _transactionBloc.add(
       RefreshTransactionsEvent(
         searchQuery: _searchQuery.value,
         startDate: _startDate,
@@ -92,7 +99,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
   void _onSearchChanged(String query) {
     _searchQuery.value = query;
     _debouncer.run(() {
-      context.read<TransactionsBloc>().add(
+      _transactionBloc.add(
         LoadTransactionsEvent(
           searchQuery: _searchQuery.value,
           startDate: _startDate,
@@ -108,7 +115,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
 
   void _clearSearch() {
     _searchController.clear();
-    context.read<TransactionsBloc>().add(
+    _transactionBloc.add(
       RefreshTransactionsEvent(
         searchQuery: _searchQuery.value,
         startDate: _startDate,
@@ -122,8 +129,17 @@ class _TransactionsPageState extends State<TransactionsPage> {
     _searchQuery.value = null;
   }
 
+  void _showDeleteConfirmation(BuildContext context, String transactionId) {
+    ConfirmationDialog.showDeleteTransactionConfirmation(
+      context,
+      onConfirm: () {
+        _transactionBloc.add(DeleteTransactionEvent(transactionId: transactionId));
+      },
+    );
+  }
+
   void _showFilterBottomSheet(BuildContext context) {
-    final state = context.read<TransactionsBloc>().state;
+    final state = _transactionBloc.state;
     if (state is! TransactionsLoadedState) return;
 
     // Get categories from CategoryBloc
@@ -165,7 +181,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
               _maxAmount = maxAmount;
               _transactionType = transactionType;
 
-              context.read<TransactionsBloc>().add(
+              _transactionBloc.add(
                 LoadTransactionsEvent(
                   searchQuery: _searchQuery.value,
                   startDate: startDate,
@@ -184,7 +200,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
           _minAmount = null;
           _maxAmount = null;
           _transactionType = null;
-          context.read<TransactionsBloc>().add(ResetFiltersEvent());
+          _transactionBloc.add(ResetFiltersEvent());
         },
       ),
     );
@@ -194,139 +210,257 @@ class _TransactionsPageState extends State<TransactionsPage> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(AppStrings.transactions),
-        actions: [
-          BlocBuilder<TransactionsBloc, TransactionsState>(
-            builder: (context, state) {
-              int activeFilterCount = 0;
-              if (state is TransactionsLoadedState) {
-                activeFilterCount = state.activeFilterCount;
-              }
+    return BlocListener<TransactionsBloc, TransactionsState>(
+      listener: (context, state) {
+        if (state is TransactionAddedState) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppStrings.transactionAddedSuccessfully)));
+        } else if (state is TransactionUpdatedState) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(AppStrings.transactionUpdatedSuccessfully)));
+        } else if (state is TransactionDeletedState) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(AppStrings.transactionDeletedSuccessfully)));
+        } else if (state is TransactionsErrorState) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text(AppStrings.transactions),
+          actions: [
+            BlocBuilder<TransactionsBloc, TransactionsState>(
+              builder: (context, state) {
+                int activeFilterCount = 0;
+                if (state is TransactionsLoadedState) {
+                  activeFilterCount = state.activeFilterCount;
+                }
 
-              return Stack(
-                children: [
-                  IconButton(
-                    onPressed: () => _showFilterBottomSheet(context),
-                    icon: Icon(Icons.filter_list, color: theme.colorScheme.onSurfaceVariant),
-                  ),
-                  if (activeFilterCount > 0)
-                    Positioned(
-                      right: 8,
-                      top: 8,
-                      child: Container(
-                        padding: const EdgeInsets.all(2),
-                        decoration: BoxDecoration(
-                          color: theme.colorScheme.error,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        constraints: const BoxConstraints(minWidth: 16, minHeight: 16),
-                        child: Text(
-                          '$activeFilterCount',
-                          style: TextStyle(color: theme.colorScheme.onError, fontSize: 12, fontWeight: FontWeight.bold),
-                          textAlign: TextAlign.center,
+                return Stack(
+                  children: [
+                    IconButton(
+                      onPressed: () => _showFilterBottomSheet(context),
+                      icon: Icon(Icons.filter_list, color: theme.colorScheme.onSurfaceVariant),
+                    ),
+                    if (activeFilterCount > 0)
+                      Positioned(
+                        right: 8,
+                        top: 8,
+                        child: Container(
+                          padding: const EdgeInsets.all(2),
+                          decoration: BoxDecoration(
+                            color: theme.colorScheme.error,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          constraints: const BoxConstraints(minWidth: 16, minHeight: 16),
+                          child: Text(
+                            '$activeFilterCount',
+                            style: TextStyle(
+                              color: theme.colorScheme.onError,
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
                         ),
                       ),
-                    ),
-                ],
-              );
-            },
-          ),
-        ],
-      ),
-      body: Column(
-        children: [
-          // Search Field
-          Padding(
-            padding: const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 0),
-            child: TextField(
-              controller: _searchController,
-              onChanged: _onSearchChanged,
-              decoration: InputDecoration(
-                hintText: AppStrings.searchTransactionsHint,
-                prefixIcon: const Icon(Icons.search),
-                suffixIcon: ValueListenableBuilder(
-                  valueListenable: _searchQuery,
-                  builder: (context, value, child) {
-                    return value != null && value.isNotEmpty
-                        ? IconButton(icon: Icon(Icons.clear), onPressed: _clearSearch)
-                        : SizedBox.shrink();
-                  },
-                ),
-                border: OutlineInputBorder(borderSide: BorderSide.none, borderRadius: BorderRadius.circular(12)),
-                filled: true,
-                fillColor: theme.colorScheme.surfaceContainerHighest,
-              ),
-            ),
-          ),
-          // Transactions List
-          Expanded(
-            child: BlocBuilder<TransactionsBloc, TransactionsState>(
-              builder: (context, state) {
-                if (state is TransactionsLoadingState) {
-                  return const TransactionShimmer();
-                } else if (state is TransactionsErrorState) {
-                  return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.error_outline, size: 64, color: theme.colorScheme.error),
-                        const SizedBox(height: 16),
-                        Text(
-                          AppStrings.somethingWentWrong,
-                          style: theme.textTheme.headlineSmall?.copyWith(
-                            fontWeight: FontWeight.w600,
-                            color: theme.colorScheme.onSurface,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          state.message,
-                          textAlign: TextAlign.center,
-                          style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant),
-                        ),
-                        const SizedBox(height: 24),
-                        ElevatedButton.icon(
-                          onPressed: () {
-                            context.read<TransactionsBloc>().add(const LoadTransactionsEvent());
-                          },
-                          icon: const Icon(Icons.refresh),
-                          label: const Text(AppStrings.retry),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: theme.colorScheme.primary,
-                            foregroundColor: theme.colorScheme.onPrimary,
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                } else if (state is TransactionsEmptyState) {
-                  return TransactionEmptyState(
-                    onRetry: () {
-                      context.read<TransactionsBloc>().add(const LoadTransactionsEvent());
-                    },
-                  );
-                } else if (state is TransactionsLoadedState) {
-                  return RefreshIndicator(
-                    backgroundColor: theme.colorScheme.onPrimary,
-                    onRefresh: () async {
-                      _onRefresh();
-                    },
-                    child: GroupedTransactionsList(
-                      transactions: state.filteredTransactions,
-                      isLoadingMore: state.isLoadingMore,
-                      scrollController: _scrollController,
-                      onEditTransaction: () {},
-                      onDeleteTransaction: () {},
-                    ),
-                  );
-                }
-                return const SizedBox.shrink();
+                  ],
+                );
               },
             ),
+          ],
+        ),
+        floatingActionButtonLocation: ExpandableFab.location,
+        floatingActionButton: ExpandableFab(
+          childrenAnimation: ExpandableFabAnimation.none,
+          openButtonBuilder: RotateFloatingActionButtonBuilder(
+            child: const Icon(Icons.add),
+            fabSize: ExpandableFabSize.regular,
           ),
-        ],
+          closeButtonBuilder: RotateFloatingActionButtonBuilder(
+            child: const Icon(Icons.close),
+            fabSize: ExpandableFabSize.regular,
+          ),
+          type: ExpandableFabType.up,
+          distance: 70,
+          children: [
+            Row(
+              children: [
+                Text(
+                  AppStrings.addIncome,
+                  style: theme.textTheme.bodyLarge?.copyWith(
+                    color: AppColors.successColor,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(width: 8),
+                FloatingActionButton.small(
+                  heroTag: 'addIncome',
+                  enableFeedback: true,
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const AddTransactionPage(initialType: TransactionType.income),
+                      ),
+                    );
+                  },
+                  backgroundColor: AppColors.successColor,
+                  child: Icon(Icons.arrow_downward, color: theme.colorScheme.onPrimary),
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                Text(
+                  AppStrings.addExpense,
+                  style: theme.textTheme.bodyLarge?.copyWith(color: AppColors.errorColor, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(width: 8),
+                FloatingActionButton.small(
+                  heroTag: 'addExpense',
+                  enableFeedback: true,
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const AddTransactionPage(initialType: TransactionType.expense),
+                      ),
+                    );
+                  },
+                  backgroundColor: AppColors.errorColor,
+                  child: Icon(Icons.arrow_upward, color: theme.colorScheme.onPrimary),
+                ),
+              ],
+            ),
+          ],
+        ),
+        body: Column(
+          children: [
+            // Search Field
+            Padding(
+              padding: const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 0),
+              child: TextField(
+                controller: _searchController,
+                onChanged: _onSearchChanged,
+                decoration: InputDecoration(
+                  hintText: AppStrings.searchTransactionsHint,
+                  prefixIcon: const Icon(Icons.search),
+                  suffixIcon: ValueListenableBuilder(
+                    valueListenable: _searchQuery,
+                    builder: (context, value, child) {
+                      return value != null && value.isNotEmpty
+                          ? IconButton(icon: Icon(Icons.clear), onPressed: _clearSearch)
+                          : SizedBox.shrink();
+                    },
+                  ),
+                  border: OutlineInputBorder(borderSide: BorderSide.none, borderRadius: BorderRadius.circular(12)),
+                  filled: true,
+                  fillColor: theme.colorScheme.surfaceContainerHighest,
+                ),
+              ),
+            ),
+
+            // Transactions List
+            Expanded(
+              child: BlocBuilder<TransactionsBloc, TransactionsState>(
+                builder: (context, state) {
+                  if (state is TransactionsLoadingState) {
+                    return const TransactionShimmer();
+                  } else if (state is TransactionsErrorState) {
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.error_outline, size: 64, color: theme.colorScheme.error),
+                          const SizedBox(height: 16),
+                          Text(
+                            AppStrings.somethingWentWrong,
+                            style: theme.textTheme.headlineSmall?.copyWith(
+                              fontWeight: FontWeight.w600,
+                              color: theme.colorScheme.onSurface,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            state.message,
+                            textAlign: TextAlign.center,
+                            style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+                          ),
+                          const SizedBox(height: 24),
+                          ElevatedButton.icon(
+                            onPressed: () {
+                              _transactionBloc.add(const LoadTransactionsEvent());
+                            },
+                            icon: const Icon(Icons.refresh),
+                            label: const Text(AppStrings.retry),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: theme.colorScheme.primary,
+                              foregroundColor: theme.colorScheme.onPrimary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  } else if (state is TransactionsEmptyState) {
+                    return TransactionEmptyState(
+                      onRetry: () {
+                        _transactionBloc.add(const LoadTransactionsEvent());
+                      },
+                    );
+                  } else if (state is TransactionsLoadedState) {
+                    return Stack(
+                      children: [
+                        RefreshIndicator(
+                          backgroundColor: theme.colorScheme.onPrimary,
+                          onRefresh: () async {
+                            _onRefresh();
+                          },
+                          child: GroupedTransactionsList(
+                            transactions: state.filteredTransactions,
+                            isLoadingMore: state.isLoadingMore,
+                            scrollController: _scrollController,
+                            onEditTransaction: (transaction) {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(builder: (context) => EditTransactionPage(transaction: transaction)),
+                              );
+                            },
+                            onDeleteTransaction: (transactionId) {
+                              _showDeleteConfirmation(context, transactionId);
+                            },
+                            onTap: (transaction) {
+                              _showTransactionDetails(context, transaction);
+                            },
+                          ),
+                        ),
+                        if (state.isLoading) const LoadingMask(),
+                      ],
+                    );
+                  }
+                  return const SizedBox.shrink();
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showTransactionDetails(BuildContext context, Transaction transaction) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) => TransactionDetailsModal(
+        transaction: transaction,
+        onEdit: () {
+          Navigator.of(context).pop(); // Close the modal first
+          Navigator.of(
+            context,
+          ).push(MaterialPageRoute(builder: (context) => EditTransactionPage(transaction: transaction)));
+        },
+        onDelete: () {
+          _showDeleteConfirmation(context, transaction.id ?? '');
+        },
       ),
     );
   }

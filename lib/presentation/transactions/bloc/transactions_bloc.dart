@@ -2,18 +2,32 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:take_home/domain/entities/transaction.dart';
 import 'package:take_home/domain/usecases/get_transactions.dart';
+import 'package:take_home/domain/usecases/add_transaction.dart';
+import 'package:take_home/domain/usecases/update_transaction.dart';
+import 'package:take_home/domain/usecases/delete_transaction.dart';
 
 part 'transactions_event.dart';
 part 'transactions_state.dart';
 
 class TransactionsBloc extends Bloc<TransactionsEvent, TransactionsState> {
   final GetTransactions getTransactions;
+  final AddTransaction addTransaction;
+  final UpdateTransaction updateTransaction;
+  final DeleteTransaction deleteTransaction;
 
-  TransactionsBloc({required this.getTransactions}) : super(TransactionsInitialState()) {
+  TransactionsBloc({
+    required this.getTransactions,
+    required this.addTransaction,
+    required this.updateTransaction,
+    required this.deleteTransaction,
+  }) : super(TransactionsInitialState()) {
     on<LoadTransactionsEvent>(_onLoadTransactions);
     on<RefreshTransactionsEvent>(_onRefreshTransactions);
     on<LoadMoreTransactionsEvent>(_onLoadMoreTransactions);
     on<ResetFiltersEvent>(_onResetFilters);
+    on<AddTransactionEvent>(_onAddTransaction);
+    on<UpdateTransactionEvent>(_onUpdateTransaction);
+    on<DeleteTransactionEvent>(_onDeleteTransaction);
   }
 
   Future<void> _onLoadTransactions(LoadTransactionsEvent event, Emitter<TransactionsState> emit) async {
@@ -148,6 +162,99 @@ class TransactionsBloc extends Bloc<TransactionsEvent, TransactionsState> {
           transactionType: null,
         ),
       );
+    }
+  }
+
+  Future<void> _onAddTransaction(AddTransactionEvent event, Emitter<TransactionsState> emit) async {
+    final currentState = state;
+
+    if (currentState is TransactionsLoadedState) {
+      emit(currentState.copyWith(isLoading: true));
+
+      try {
+        final addedTransaction = await addTransaction.call(event.transaction);
+        emit(TransactionAddedState(transaction: addedTransaction));
+
+        final updatedTransactions = List<Transaction>.from(currentState.transactions)..insert(0, addedTransaction);
+        final filteredTransactions = updatedTransactions;
+
+        emit(
+          currentState.copyWith(
+            transactions: updatedTransactions,
+            filteredTransactions: filteredTransactions,
+            isLoading: false,
+          ),
+        );
+      } catch (e) {
+        emit(currentState.copyWith(isLoading: false));
+        emit(TransactionsErrorState(e.toString()));
+      }
+    }
+  }
+
+  Future<void> _onUpdateTransaction(UpdateTransactionEvent event, Emitter<TransactionsState> emit) async {
+    final currentState = state;
+
+    if (currentState is TransactionsLoadedState) {
+      emit(currentState.copyWith(isLoading: true));
+
+      try {
+        final updatedTransaction = await updateTransaction.call(event.transaction);
+        emit(TransactionUpdatedState(transaction: updatedTransaction));
+
+        final int index = currentState.transactions.indexWhere(
+          (transaction) => transaction.id == updatedTransaction.id,
+        );
+        final updatedTransactions = List<Transaction>.from(currentState.transactions)..[index] = updatedTransaction;
+
+        final filteredTransactions = updatedTransactions;
+
+        emit(
+          currentState.copyWith(
+            transactions: updatedTransactions,
+            filteredTransactions: filteredTransactions,
+            isLoading: false,
+          ),
+        );
+      } catch (e) {
+        emit(currentState.copyWith(isLoading: false));
+        emit(TransactionsErrorState(e.toString()));
+      }
+    }
+  }
+
+  Future<void> _onDeleteTransaction(DeleteTransactionEvent event, Emitter<TransactionsState> emit) async {
+    final currentState = state;
+
+    if (currentState is TransactionsLoadedState) {
+      emit(currentState.copyWith(isLoading: true));
+
+      try {
+        final success = await deleteTransaction.call(event.transactionId);
+        if (success) {
+          emit(TransactionDeletedState(transactionId: event.transactionId));
+
+          final int index = currentState.transactions.indexWhere(
+            (transaction) => transaction.id == event.transactionId,
+          );
+
+          final updatedTransactions = List<Transaction>.from(currentState.transactions)..removeAt(index);
+          final filteredTransactions = updatedTransactions;
+
+          emit(
+            currentState.copyWith(
+              transactions: updatedTransactions,
+              filteredTransactions: filteredTransactions,
+              isLoading: false,
+            ),
+          );
+        } else {
+          emit(TransactionsErrorState('Failed to delete transaction'));
+        }
+      } catch (e) {
+        emit(currentState.copyWith(isLoading: false));
+        emit(TransactionsErrorState(e.toString()));
+      }
     }
   }
 
