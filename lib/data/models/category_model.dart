@@ -12,19 +12,15 @@ class CategoryModel extends Category {
 
   factory CategoryModel.fromJson(Map<String, dynamic> json) {
     return CategoryModel(
-      id: json['id'],
-      name: json['name'],
-      icon: json['icon'],
-      color: Utils.stringToColor(json['color']),
-      budget: (json['budget'] as num).toDouble(),
+      id: json['id']?.toString() ?? '',
+      name: json['name']?.toString() ?? '',
+      icon: json['icon']?.toString() ?? '',
+      color: Utils.stringToColor(json['color']?.toString() ?? ''),
+      budget: (json['budget'] as num?)?.toDouble() ?? 0.0,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {'id': id, 'name': name, 'icon': icon, 'color': Utils.colorToString(color), 'budget': budget};
-  }
-
-  Category toEntity() {
-    return Category(id: id, name: name, icon: icon, color: color, budget: budget);
   }
 }
