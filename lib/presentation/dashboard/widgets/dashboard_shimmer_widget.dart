@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
+
 import 'package:take_home/core/decorations/app_decorations.dart';
 
-class DashboardSkeleton extends StatelessWidget {
-  const DashboardSkeleton({super.key});
+class DashboardShimmerWidget extends StatelessWidget {
+  const DashboardShimmerWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
