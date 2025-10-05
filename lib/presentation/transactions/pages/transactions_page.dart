@@ -6,6 +6,7 @@ import 'package:take_home/core/constants/app_color.dart';
 import 'package:take_home/core/constants/app_strings.dart';
 import 'package:take_home/core/utils/debouncer.dart';
 import 'package:take_home/core/widgets/confirmation_dialog.dart';
+import 'package:take_home/core/widgets/error_widget.dart';
 import 'package:take_home/core/widgets/loading_mask.dart';
 import 'package:take_home/domain/entities/transaction.dart';
 import 'package:take_home/presentation/category/bloc/category_bloc.dart';
@@ -25,9 +26,12 @@ class TransactionsPage extends StatefulWidget {
   State<TransactionsPage> createState() => _TransactionsPageState();
 }
 
-class _TransactionsPageState extends State<TransactionsPage> {
+class _TransactionsPageState extends State<TransactionsPage> with TickerProviderStateMixin {
   late TransactionsBloc _transactionBloc;
   late CategoryBloc _categoryBloc;
+  late AnimationController _animationController;
+  late Animation<double> _fadeAnimation;
+  late Animation<Offset> _slideAnimation;
 
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _searchController = TextEditingController();
@@ -63,7 +67,24 @@ class _TransactionsPageState extends State<TransactionsPage> {
     _scrollController.dispose();
     _searchController.dispose();
     _debouncer.dispose();
+    _animationController.dispose();
     super.dispose();
+  }
+
+  void _initAnimation() {
+    _animationController = AnimationController(duration: const Duration(milliseconds: 800), vsync: this);
+
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _animationController, curve: Curves.easeInOut));
+
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.3),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _animationController, curve: Curves.easeOutCubic));
+
+    _animationController.forward();
   }
 
   void _onScroll() {
@@ -224,6 +245,8 @@ class _TransactionsPageState extends State<TransactionsPage> {
           ).showSnackBar(SnackBar(content: Text(AppStrings.transactionDeletedSuccessfully)));
         } else if (state is TransactionsErrorState) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
+        } else if (state is TransactionsLoadedState) {
+          _initAnimation();
         }
       },
       child: Scaffold(
@@ -236,7 +259,6 @@ class _TransactionsPageState extends State<TransactionsPage> {
                 if (state is TransactionsLoadedState) {
                   activeFilterCount = state.activeFilterCount;
                 }
-
                 return Stack(
                   children: [
                     IconButton(
@@ -367,39 +389,11 @@ class _TransactionsPageState extends State<TransactionsPage> {
                   if (state is TransactionsLoadingState) {
                     return const TransactionShimmer();
                   } else if (state is TransactionsErrorState) {
-                    return Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.error_outline, size: 64, color: theme.colorScheme.error),
-                          const SizedBox(height: 16),
-                          Text(
-                            AppStrings.somethingWentWrong,
-                            style: theme.textTheme.headlineSmall?.copyWith(
-                              fontWeight: FontWeight.w600,
-                              color: theme.colorScheme.onSurface,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            state.message,
-                            textAlign: TextAlign.center,
-                            style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant),
-                          ),
-                          const SizedBox(height: 24),
-                          ElevatedButton.icon(
-                            onPressed: () {
-                              _transactionBloc.add(const LoadTransactionsEvent());
-                            },
-                            icon: const Icon(Icons.refresh),
-                            label: const Text(AppStrings.retry),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: theme.colorScheme.primary,
-                              foregroundColor: theme.colorScheme.onPrimary,
-                            ),
-                          ),
-                        ],
-                      ),
+                    return AppErrorWidget(
+                      message: state.message,
+                      onRetry: () {
+                        _transactionBloc.add(const LoadTransactionsEvent());
+                      },
                     );
                   } else if (state is TransactionsEmptyState) {
                     return TransactionEmptyState(
@@ -408,32 +402,40 @@ class _TransactionsPageState extends State<TransactionsPage> {
                       },
                     );
                   } else if (state is TransactionsLoadedState) {
-                    return Stack(
-                      children: [
-                        RefreshIndicator(
-                          backgroundColor: theme.colorScheme.onPrimary,
-                          onRefresh: () async {
-                            _onRefresh();
-                          },
-                          child: GroupedTransactionsList(
-                            transactions: state.filteredTransactions,
-                            isLoadingMore: state.isLoadingMore,
-                            scrollController: _scrollController,
-                            onEditTransaction: (transaction) {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(builder: (context) => EditTransactionPage(transaction: transaction)),
-                              );
-                            },
-                            onDeleteTransaction: (transactionId) {
-                              _showDeleteConfirmation(context, transactionId);
-                            },
-                            onTap: (transaction) {
-                              _showTransactionDetails(context, transaction);
-                            },
-                          ),
+                    return FadeTransition(
+                      opacity: _fadeAnimation,
+                      child: SlideTransition(
+                        position: _slideAnimation,
+                        child: Stack(
+                          children: [
+                            RefreshIndicator(
+                              backgroundColor: theme.colorScheme.onPrimary,
+                              onRefresh: () async {
+                                _onRefresh();
+                              },
+                              child: GroupedTransactionsList(
+                                transactions: state.filteredTransactions,
+                                isLoadingMore: state.isLoadingMore,
+                                scrollController: _scrollController,
+                                onEditTransaction: (transaction) {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) => EditTransactionPage(transaction: transaction),
+                                    ),
+                                  );
+                                },
+                                onDeleteTransaction: (transactionId) {
+                                  _showDeleteConfirmation(context, transactionId);
+                                },
+                                onTap: (transaction) {
+                                  _showTransactionDetails(context, transaction);
+                                },
+                              ),
+                            ),
+                            if (state.isLoading) const LoadingMask(),
+                          ],
                         ),
-                        if (state.isLoading) const LoadingMask(),
-                      ],
+                      ),
                     );
                   }
                   return const SizedBox.shrink();
@@ -453,7 +455,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
       builder: (context) => TransactionDetailsModal(
         transaction: transaction,
         onEdit: () {
-          Navigator.of(context).pop(); // Close the modal first
+          Navigator.of(context).pop();
           Navigator.of(
             context,
           ).push(MaterialPageRoute(builder: (context) => EditTransactionPage(transaction: transaction)));
