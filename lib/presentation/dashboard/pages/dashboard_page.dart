@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
+
 import 'package:take_home/core/constants/app_color.dart';
 import 'package:take_home/core/constants/app_strings.dart';
 import 'package:take_home/core/widgets/confirmation_dialog.dart';
 import 'package:take_home/core/widgets/error_widget.dart';
 import 'package:take_home/domain/entities/transaction.dart';
+import 'package:take_home/presentation/bottom_nav_bar/bloc/bottom_nav_bar_bloc.dart';
 import 'package:take_home/presentation/dashboard/bloc/dashboard_bloc.dart';
 import 'package:take_home/presentation/dashboard/widgets/dashboard_header.dart';
 import 'package:take_home/presentation/dashboard/widgets/balance_card.dart';
 import 'package:take_home/presentation/dashboard/widgets/spending_overview_widget.dart';
 import 'package:take_home/presentation/dashboard/widgets/recent_transactions_widget.dart';
-import 'package:take_home/presentation/dashboard/widgets/dashboard_skeleton.dart';
+import 'package:take_home/presentation/dashboard/widgets/dashboard_shimmer_widget.dart';
 import 'package:take_home/presentation/transactions/bloc/transactions_bloc.dart';
 import 'package:take_home/presentation/transactions/pages/add_transaction_page.dart';
 import 'package:take_home/presentation/transactions/pages/edit_transaction_page.dart';
@@ -26,30 +28,16 @@ class DashboardPage extends StatefulWidget {
 
 class _DashboardPageState extends State<DashboardPage> with TickerProviderStateMixin {
   late DashboardBloc _dashboardBloc;
-  late AnimationController _parallaxController;
-  late Animation<double> _parallaxAnimation;
+  late BottomNavBarBloc _bottomNavBarBloc;
+  final GlobalKey<ExpandableFabState> _fabKey = GlobalKey<ExpandableFabState>();
 
   @override
   void initState() {
     super.initState();
     _dashboardBloc = context.read<DashboardBloc>();
+    _bottomNavBarBloc = context.read<BottomNavBarBloc>();
+
     _dashboardBloc.add(const LoadDashboardDataEvent());
-    _initAnimation();
-  }
-
-  void _initAnimation() {
-    _parallaxController = AnimationController(duration: const Duration(milliseconds: 1000), vsync: this);
-    _parallaxAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(parent: _parallaxController, curve: Curves.easeOutCubic));
-    _parallaxController.forward();
-  }
-
-  @override
-  void dispose() {
-    _parallaxController.dispose();
-    super.dispose();
   }
 
   @override
@@ -66,7 +54,7 @@ class _DashboardPageState extends State<DashboardPage> with TickerProviderStateM
         child: BlocBuilder<DashboardBloc, DashboardState>(
           builder: (context, state) {
             if (state is DashboardLoading) {
-              return const DashboardSkeleton();
+              return const DashboardShimmerWidget();
             } else if (state is DashboardError) {
               return AppErrorWidget(
                 message: state.message,
@@ -78,12 +66,13 @@ class _DashboardPageState extends State<DashboardPage> with TickerProviderStateM
               return _buildDashboardContent(context, state, theme);
             }
 
-            return const DashboardSkeleton();
+            return const DashboardShimmerWidget();
           },
         ),
       ),
       floatingActionButtonLocation: ExpandableFab.location,
       floatingActionButton: ExpandableFab(
+        key: _fabKey,
         childrenAnimation: ExpandableFabAnimation.none,
         openButtonBuilder: RotateFloatingActionButtonBuilder(
           child: const Icon(Icons.add),
@@ -107,6 +96,7 @@ class _DashboardPageState extends State<DashboardPage> with TickerProviderStateM
                 heroTag: 'addIncome',
                 enableFeedback: true,
                 onPressed: () {
+                  _fabKey.currentState?.close();
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) => const AddTransactionPage(initialType: TransactionType.income),
@@ -129,6 +119,7 @@ class _DashboardPageState extends State<DashboardPage> with TickerProviderStateM
                 heroTag: 'addExpense',
                 enableFeedback: true,
                 onPressed: () {
+                  _fabKey.currentState?.close();
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) => const AddTransactionPage(initialType: TransactionType.expense),
@@ -156,23 +147,7 @@ class _DashboardPageState extends State<DashboardPage> with TickerProviderStateM
         physics: const AlwaysScrollableScrollPhysics(),
         slivers: [
           // Fixed Header with parallax effect
-          SliverAppBar(
-            expandedHeight: 120,
-            floating: false,
-            pinned: true,
-            backgroundColor: theme.colorScheme.primary,
-            flexibleSpace: FlexibleSpaceBar(
-              background: AnimatedBuilder(
-                animation: _parallaxAnimation,
-                builder: (context, child) {
-                  return Transform.translate(
-                    offset: Offset(0, -30 * (1 - _parallaxAnimation.value)),
-                    child: DashboardHeader(notificationCount: 3, onNotificationTap: () {}, onProfileTap: () {}),
-                  );
-                },
-              ),
-            ),
-          ),
+          DashboardHeader(notificationCount: 3, onNotificationTap: () {}, onProfileTap: () {}),
 
           // Balance Card
           SliverToBoxAdapter(
@@ -198,7 +173,9 @@ class _DashboardPageState extends State<DashboardPage> with TickerProviderStateM
           SliverToBoxAdapter(
             child: RecentTransactionsWidget(
               transactions: state.recentTransactions,
-              onViewAll: () {},
+              onViewAll: () {
+                _bottomNavBarBloc.add(const BottomNavBarTabChangedEvent(1));
+              },
               onEdit: (transaction) {},
               onDelete: (transaction) {},
               onTap: (transaction) {
