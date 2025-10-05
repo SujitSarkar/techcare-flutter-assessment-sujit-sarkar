@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
-import 'package:take_home/core/constants/app_color.dart';
 
 import 'package:take_home/core/constants/app_strings.dart';
 import 'package:take_home/core/utils/debouncer.dart';
@@ -11,7 +9,6 @@ import 'package:take_home/core/widgets/loading_mask.dart';
 import 'package:take_home/domain/entities/transaction.dart';
 import 'package:take_home/presentation/category/bloc/category_bloc.dart';
 import 'package:take_home/presentation/transactions/bloc/transactions_bloc.dart';
-import 'package:take_home/presentation/transactions/pages/add_transaction_page.dart';
 import 'package:take_home/presentation/transactions/pages/edit_transaction_page.dart';
 import 'package:take_home/presentation/transactions/widgets/grouped_transactions_list.dart';
 import 'package:take_home/presentation/transactions/widgets/transaction_details_modal.dart';
@@ -29,9 +26,6 @@ class TransactionsPage extends StatefulWidget {
 class _TransactionsPageState extends State<TransactionsPage> with TickerProviderStateMixin {
   late TransactionsBloc _transactionBloc;
   late CategoryBloc _categoryBloc;
-  late AnimationController _animationController;
-  late Animation<double> _fadeAnimation;
-  late Animation<Offset> _slideAnimation;
 
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _searchController = TextEditingController();
@@ -67,24 +61,7 @@ class _TransactionsPageState extends State<TransactionsPage> with TickerProvider
     _scrollController.dispose();
     _searchController.dispose();
     _debouncer.dispose();
-    _animationController.dispose();
     super.dispose();
-  }
-
-  void _initAnimation() {
-    _animationController = AnimationController(duration: const Duration(milliseconds: 800), vsync: this);
-
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(parent: _animationController, curve: Curves.easeInOut));
-
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.3),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(parent: _animationController, curve: Curves.easeOutCubic));
-
-    _animationController.forward();
   }
 
   void _onScroll() {
@@ -148,15 +125,6 @@ class _TransactionsPageState extends State<TransactionsPage> with TickerProvider
       ),
     );
     _searchQuery.value = null;
-  }
-
-  void _showDeleteConfirmation(BuildContext context, String transactionId) {
-    ConfirmationDialog.showDeleteTransactionConfirmation(
-      context,
-      onConfirm: () {
-        _transactionBloc.add(DeleteTransactionEvent(transactionId: transactionId));
-      },
-    );
   }
 
   void _showFilterBottomSheet(BuildContext context) {
@@ -245,8 +213,6 @@ class _TransactionsPageState extends State<TransactionsPage> with TickerProvider
           ).showSnackBar(SnackBar(content: Text(AppStrings.transactionDeletedSuccessfully)));
         } else if (state is TransactionsErrorState) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
-        } else if (state is TransactionsLoadedState) {
-          _initAnimation();
         }
       },
       child: Scaffold(
@@ -290,69 +256,6 @@ class _TransactionsPageState extends State<TransactionsPage> with TickerProvider
                   ],
                 );
               },
-            ),
-          ],
-        ),
-        floatingActionButtonLocation: ExpandableFab.location,
-        floatingActionButton: ExpandableFab(
-          childrenAnimation: ExpandableFabAnimation.none,
-          openButtonBuilder: RotateFloatingActionButtonBuilder(
-            child: const Icon(Icons.add),
-            fabSize: ExpandableFabSize.regular,
-          ),
-          closeButtonBuilder: RotateFloatingActionButtonBuilder(
-            child: const Icon(Icons.close),
-            fabSize: ExpandableFabSize.regular,
-          ),
-          type: ExpandableFabType.up,
-          distance: 70,
-          children: [
-            Row(
-              children: [
-                Text(
-                  AppStrings.addIncome,
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    color: AppColors.successColor,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(width: 8),
-                FloatingActionButton.small(
-                  heroTag: 'addIncome',
-                  enableFeedback: true,
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => const AddTransactionPage(initialType: TransactionType.income),
-                      ),
-                    );
-                  },
-                  backgroundColor: AppColors.successColor,
-                  child: Icon(Icons.arrow_downward, color: theme.colorScheme.onPrimary),
-                ),
-              ],
-            ),
-            Row(
-              children: [
-                Text(
-                  AppStrings.addExpense,
-                  style: theme.textTheme.bodyLarge?.copyWith(color: AppColors.errorColor, fontWeight: FontWeight.bold),
-                ),
-                SizedBox(width: 8),
-                FloatingActionButton.small(
-                  heroTag: 'addExpense',
-                  enableFeedback: true,
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => const AddTransactionPage(initialType: TransactionType.expense),
-                      ),
-                    );
-                  },
-                  backgroundColor: AppColors.errorColor,
-                  child: Icon(Icons.arrow_upward, color: theme.colorScheme.onPrimary),
-                ),
-              ],
             ),
           ],
         ),
@@ -402,40 +305,33 @@ class _TransactionsPageState extends State<TransactionsPage> with TickerProvider
                       },
                     );
                   } else if (state is TransactionsLoadedState) {
-                    return FadeTransition(
-                      opacity: _fadeAnimation,
-                      child: SlideTransition(
-                        position: _slideAnimation,
-                        child: Stack(
-                          children: [
-                            RefreshIndicator(
-                              backgroundColor: theme.colorScheme.onPrimary,
-                              onRefresh: () async {
-                                _onRefresh();
-                              },
-                              child: GroupedTransactionsList(
-                                transactions: state.filteredTransactions,
-                                isLoadingMore: state.isLoadingMore,
-                                scrollController: _scrollController,
-                                onEditTransaction: (transaction) {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (context) => EditTransactionPage(transaction: transaction),
-                                    ),
-                                  );
-                                },
-                                onDeleteTransaction: (transactionId) {
-                                  _showDeleteConfirmation(context, transactionId);
-                                },
-                                onTap: (transaction) {
-                                  _showTransactionDetails(context, transaction);
-                                },
-                              ),
-                            ),
-                            if (state.isLoading) const LoadingMask(),
-                          ],
+                    return Stack(
+                      children: [
+                        RefreshIndicator(
+                          backgroundColor: theme.colorScheme.onPrimary,
+                          onRefresh: () async {
+                            _onRefresh();
+                          },
+                          child: GroupedTransactionsList(
+                            padding: const EdgeInsets.only(bottom: 60),
+                            transactions: state.filteredTransactions,
+                            isLoadingMore: state.isLoadingMore,
+                            scrollController: _scrollController,
+                            onEditTransaction: (transaction) {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(builder: (context) => EditTransactionPage(transaction: transaction)),
+                              );
+                            },
+                            onDeleteTransaction: (transaction) {
+                              _showDeleteConfirmation(context, transaction);
+                            },
+                            onTap: (transaction) {
+                              _showTransactionDetails(context, transaction);
+                            },
+                          ),
                         ),
-                      ),
+                        if (state.isLoading) const LoadingMask(),
+                      ],
                     );
                   }
                   return const SizedBox.shrink();
@@ -445,6 +341,15 @@ class _TransactionsPageState extends State<TransactionsPage> with TickerProvider
           ],
         ),
       ),
+    );
+  }
+
+  void _showDeleteConfirmation(BuildContext context, Transaction transaction) {
+    ConfirmationDialog.showDeleteTransactionConfirmation(
+      context,
+      onConfirm: () {
+        _transactionBloc.add(DeleteTransactionEvent(transactionId: transaction.id ?? ''));
+      },
     );
   }
 
@@ -461,7 +366,7 @@ class _TransactionsPageState extends State<TransactionsPage> with TickerProvider
           ).push(MaterialPageRoute(builder: (context) => EditTransactionPage(transaction: transaction)));
         },
         onDelete: () {
-          _showDeleteConfirmation(context, transaction.id ?? '');
+          _showDeleteConfirmation(context, transaction);
         },
       ),
     );
