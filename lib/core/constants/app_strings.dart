@@ -119,4 +119,16 @@ class AppStrings {
   static const String categoryRequired = 'Please select a category';
   static const String dateCannotBeInFuture = 'Date cannot be in the future';
   static const String invalidAmount = 'Please enter a valid amount';
+
+  // Analytics Page
+  static const String categoryBreakdown = 'Category Breakdown';
+  static const String timePeriod = 'Time Period';
+  static const String unknown = 'Unknown';
+  static const String loadingAnalytics = 'Loading analytics...';
+  static const String error = 'Error';
+  static const String totalIncome = 'Total Income';
+  static const String totalExpenses = 'Total Expenses';
+  static const String netBalance = 'Net Balance';
+  static const String spendingTrend = 'Spending Trend';
+  static const String budgetProgress = 'Budget Progress';
 }
