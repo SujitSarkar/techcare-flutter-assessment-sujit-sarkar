@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:take_home/core/constants/app_strings.dart';
 
 class ConfirmationDialog {
-  static Future<bool?> showDeleteTransactionConfirmation(
+  static Future<void> showDeleteTransactionConfirmation(
     BuildContext context, {
     String? title,
     String? message,
@@ -11,7 +11,7 @@ class ConfirmationDialog {
   }) async {
     final theme = Theme.of(context);
 
-    return await showDialog<bool>(
+    showDialog(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext dialogContext) {
@@ -24,14 +24,14 @@ class ConfirmationDialog {
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.of(dialogContext).pop(false);
+                Navigator.of(dialogContext).pop();
                 onCancel?.call();
               },
               child: Text(AppStrings.cancel, style: TextStyle(color: theme.colorScheme.onSurfaceVariant)),
             ),
             ElevatedButton(
               onPressed: () {
-                Navigator.of(dialogContext).pop(true);
+                Navigator.of(dialogContext).pop();
                 onConfirm?.call();
               },
               style: ElevatedButton.styleFrom(
