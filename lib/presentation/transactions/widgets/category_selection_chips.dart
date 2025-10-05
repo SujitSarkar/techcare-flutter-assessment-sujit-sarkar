@@ -54,13 +54,13 @@ class CategorySelectionChips extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
           color: isSelected
-              ? category.color?.withOpacity(0.2) ?? theme.colorScheme.primary.withOpacity(0.2)
+              ? category.color?.withValues(alpha: 0.2) ?? theme.colorScheme.primary.withValues(alpha: 0.2)
               : theme.colorScheme.surfaceContainerHighest,
           borderRadius: BorderRadius.circular(25),
           border: Border.all(
             color: isSelected
                 ? category.color ?? theme.colorScheme.primary
-                : theme.colorScheme.outline.withOpacity(0.3),
+                : theme.colorScheme.outline.withValues(alpha: 0.3),
             width: isSelected ? 2 : 1,
           ),
         ),
@@ -70,7 +70,7 @@ class CategorySelectionChips extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(4),
               decoration: BoxDecoration(
-                color: category.color?.withOpacity(0.2) ?? theme.colorScheme.primary.withOpacity(0.2),
+                color: category.color?.withValues(alpha: 0.2) ?? theme.colorScheme.primary.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(

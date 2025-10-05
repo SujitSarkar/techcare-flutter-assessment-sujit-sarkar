@@ -52,7 +52,7 @@ class _TransactionTypeSelectorState extends State<TransactionTypeSelector> with 
               decoration: BoxDecoration(
                 color: theme.colorScheme.surfaceContainerHighest,
                 borderRadius: BorderRadius.circular(25),
-                border: Border.all(color: theme.colorScheme.outline.withOpacity(0.2)),
+                border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.2)),
               ),
               child: Row(
                 children: [
@@ -111,7 +111,7 @@ class _TransactionTypeSelectorState extends State<TransactionTypeSelector> with 
           color: isSelected ? color : Colors.transparent,
           borderRadius: BorderRadius.circular(21),
           boxShadow: isSelected
-              ? [BoxShadow(color: color.withOpacity(0.3), blurRadius: 8, offset: const Offset(0, 2))]
+              ? [BoxShadow(color: color.withValues(alpha: 0.3), blurRadius: 8, offset: const Offset(0, 2))]
               : null,
         ),
         child: Center(
