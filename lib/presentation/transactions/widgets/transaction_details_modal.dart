@@ -10,8 +10,15 @@ class TransactionDetailsModal extends StatelessWidget {
   final Transaction transaction;
   final VoidCallback? onEdit;
   final VoidCallback? onDelete;
+  final bool hideActionButtons;
 
-  const TransactionDetailsModal({super.key, required this.transaction, this.onEdit, this.onDelete});
+  const TransactionDetailsModal({
+    super.key,
+    required this.transaction,
+    this.onEdit,
+    this.onDelete,
+    this.hideActionButtons = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -129,48 +136,50 @@ class TransactionDetailsModal extends StatelessWidget {
         ),
 
         // Action Buttons - Fixed at bottom
-        Padding(
-          padding: const EdgeInsets.all(24),
-          child: Row(
-            children: [
-              Expanded(
-                child: OutlinedButton.icon(
-                  onPressed: onEdit,
-                  icon: const Icon(Icons.edit),
-                  label: const Text(AppStrings.edit),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: theme.colorScheme.primary,
-                    side: BorderSide(color: theme.colorScheme.primary),
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        if (!hideActionButtons) ...[
+          Padding(
+            padding: const EdgeInsets.all(24),
+            child: Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: onEdit,
+                    icon: const Icon(Icons.edit),
+                    label: const Text(AppStrings.edit),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: theme.colorScheme.primary,
+                      side: BorderSide(color: theme.colorScheme.primary),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: ElevatedButton.icon(
-                  onPressed: () {
-                    ConfirmationDialog.showDeleteTransactionConfirmation(
-                      context,
-                      onConfirm: () {
-                        Navigator.of(context).pop();
-                        onDelete?.call();
-                      },
-                    );
-                  },
-                  icon: const Icon(Icons.delete),
-                  label: const Text(AppStrings.delete),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: theme.colorScheme.error,
-                    foregroundColor: theme.colorScheme.onError,
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      ConfirmationDialog.showDeleteTransactionConfirmation(
+                        context,
+                        onConfirm: () {
+                          Navigator.of(context).pop();
+                          onDelete?.call();
+                        },
+                      );
+                    },
+                    icon: const Icon(Icons.delete),
+                    label: const Text(AppStrings.delete),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: theme.colorScheme.error,
+                      foregroundColor: theme.colorScheme.onError,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
+        ],
       ],
     );
   }
