@@ -18,7 +18,7 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
   StreamSubscription<TransactionsState>? _transactionsSubscription;
 
   DashboardBloc({required this.getTransactions, required this.getCategories, required this.transactionsBloc})
-    : super(DashboardInitial()) {
+    : super(DashboardInitialState()) {
     on<LoadDashboardDataEvent>(_onLoadDashboardData);
     on<RefreshDashboardEvent>(_onRefreshDashboard);
     on<ToggleBalanceVisibilityEvent>(_onToggleBalanceVisibility);
@@ -43,7 +43,7 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
   }
 
   Future<void> _onLoadDashboardData(LoadDashboardDataEvent event, Emitter<DashboardState> emit) async {
-    emit(DashboardLoading());
+    emit(DashboardLoadingState());
 
     try {
       // Load transactions and categories in parallel
@@ -52,7 +52,7 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
 
       await _updateDashboardData(emit, transactionsResponse.transactions, categories);
     } catch (e) {
-      emit(DashboardError(message: e.toString()));
+      emit(DashboardErrorState(message: e.toString()));
     }
   }
 
@@ -88,7 +88,7 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
 
         await _updateDashboardData(emit, allTransactions, currentState.categories);
       } catch (e) {
-        emit(DashboardError(message: e.toString()));
+        emit(DashboardErrorState(message: e.toString()));
       }
     }
   }

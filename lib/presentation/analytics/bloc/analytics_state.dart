@@ -7,23 +7,23 @@ sealed class AnalyticsState extends Equatable {
   List<Object> get props => [];
 }
 
-final class AnalyticsInitial extends AnalyticsState {}
+final class AnalyticsInitialState extends AnalyticsState {}
 
-final class AnalyticsLoading extends AnalyticsState {}
+final class AnalyticsLoadingState extends AnalyticsState {}
 
-final class AnalyticsLoaded extends AnalyticsState {
+final class AnalyticsLoadedState extends AnalyticsState {
   final Analytics analytics;
 
-  const AnalyticsLoaded({required this.analytics});
+  const AnalyticsLoadedState({required this.analytics});
 
   @override
   List<Object> get props => [analytics];
 }
 
-final class AnalyticsError extends AnalyticsState {
+final class AnalyticsErrorState extends AnalyticsState {
   final String message;
 
-  const AnalyticsError({required this.message});
+  const AnalyticsErrorState({required this.message});
 
   @override
   List<Object> get props => [message];

@@ -47,15 +47,15 @@ class _DashboardPageState extends State<DashboardPage> with TickerProviderStateM
     return Scaffold(
       body: BlocListener<DashboardBloc, DashboardState>(
         listener: (context, state) {
-          if (state is DashboardError) {
+          if (state is DashboardErrorState) {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
           }
         },
         child: BlocBuilder<DashboardBloc, DashboardState>(
           builder: (context, state) {
-            if (state is DashboardLoading) {
+            if (state is DashboardLoadingState) {
               return const DashboardShimmerWidget();
-            } else if (state is DashboardError) {
+            } else if (state is DashboardErrorState) {
               return AppErrorWidget(
                 message: state.message,
                 onRetry: () {

@@ -67,9 +67,9 @@ class _AnalyticsPageState extends State<AnalyticsPage> with TickerProviderStateM
     final theme = Theme.of(context);
     return BlocListener<AnalyticsBloc, AnalyticsState>(
       listener: (context, state) {
-        if (state is AnalyticsError) {
+        if (state is AnalyticsErrorState) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
-        } else if (state is AnalyticsLoaded) {
+        } else if (state is AnalyticsLoadedState) {
           _initAnimation();
         }
       },
@@ -83,9 +83,9 @@ class _AnalyticsPageState extends State<AnalyticsPage> with TickerProviderStateM
           },
           child: BlocBuilder<AnalyticsBloc, AnalyticsState>(
             builder: (context, state) {
-              if (state is AnalyticsLoading) {
+              if (state is AnalyticsLoadingState) {
                 return const AnalyticsShimmer();
-              } else if (state is AnalyticsError) {
+              } else if (state is AnalyticsErrorState) {
                 return CustomScrollView(
                   physics: const AlwaysScrollableScrollPhysics(),
                   slivers: [
@@ -99,7 +99,7 @@ class _AnalyticsPageState extends State<AnalyticsPage> with TickerProviderStateM
                     ),
                   ],
                 );
-              } else if (state is AnalyticsLoaded) {
+              } else if (state is AnalyticsLoadedState) {
                 return _buildAnalyticsContent(state.analytics, theme);
               }
               return const SizedBox.shrink();

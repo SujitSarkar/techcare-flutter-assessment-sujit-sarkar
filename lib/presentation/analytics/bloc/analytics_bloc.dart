@@ -10,18 +10,18 @@ part 'analytics_state.dart';
 class AnalyticsBloc extends Bloc<AnalyticsEvent, AnalyticsState> {
   final GetAnalytics getAnalytics;
 
-  AnalyticsBloc({required this.getAnalytics}) : super(AnalyticsInitial()) {
+  AnalyticsBloc({required this.getAnalytics}) : super(AnalyticsInitialState()) {
     on<GetAnalyticsEvent>(_onGetAnalytics);
   }
 
   Future<void> _onGetAnalytics(GetAnalyticsEvent event, Emitter<AnalyticsState> emit) async {
-    emit(AnalyticsLoading());
+    emit(AnalyticsLoadingState());
 
     try {
       final analytics = await getAnalytics.call(startDate: event.startDate, endDate: event.endDate);
-      emit(AnalyticsLoaded(analytics: analytics));
+      emit(AnalyticsLoadedState(analytics: analytics));
     } catch (e) {
-      emit(AnalyticsError(message: e.toString()));
+      emit(AnalyticsErrorState(message: e.toString()));
     }
   }
 }

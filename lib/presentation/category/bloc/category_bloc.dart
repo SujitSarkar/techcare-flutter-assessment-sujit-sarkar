@@ -10,12 +10,12 @@ part 'category_state.dart';
 class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
   final GetCategories getCategories;
 
-  CategoryBloc({required this.getCategories}) : super(CategoryInitial()) {
+  CategoryBloc({required this.getCategories}) : super(CategoryInitialState()) {
     on<FetchCategoriesEvent>(_onFetchCategories);
   }
 
   Future<void> _onFetchCategories(FetchCategoriesEvent event, Emitter<CategoryState> emit) async {
-    emit(CategoryLoading());
+    emit(CategoryLoadingState());
 
     try {
       final categories = await getCategories();

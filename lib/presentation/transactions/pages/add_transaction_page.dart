@@ -122,7 +122,7 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                           });
                         },
                       );
-                    } else if (state is CategoryLoading) {
+                    } else if (state is CategoryLoadingState) {
                       return const Center(child: CircularProgressIndicator());
                     } else {
                       return Text(

@@ -7,9 +7,9 @@ sealed class DashboardState extends Equatable {
   List<Object> get props => [];
 }
 
-final class DashboardInitial extends DashboardState {}
+final class DashboardInitialState extends DashboardState {}
 
-final class DashboardLoading extends DashboardState {}
+final class DashboardLoadingState extends DashboardState {}
 
 final class DashboardLoaded extends DashboardState {
   final List<Transaction> allTransactions;
@@ -67,10 +67,10 @@ final class DashboardLoaded extends DashboardState {
   }
 }
 
-final class DashboardError extends DashboardState {
+final class DashboardErrorState extends DashboardState {
   final String message;
 
-  const DashboardError({required this.message});
+  const DashboardErrorState({required this.message});
 
   @override
   List<Object> get props => [message];
