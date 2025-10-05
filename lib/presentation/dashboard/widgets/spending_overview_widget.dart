@@ -52,7 +52,7 @@ class _SpendingOverviewWidgetState extends State<SpendingOverviewWidget> with Ti
               Icon(Icons.pie_chart_outline, size: 48, color: theme.colorScheme.onSurface.withValues(alpha: 0.5)),
               const SizedBox(height: 12),
               Text(
-                'No spending data available',
+                AppStrings.noSpendingDataAvailable,
                 style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
               ),
             ],

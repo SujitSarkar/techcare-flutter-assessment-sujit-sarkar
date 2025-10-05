@@ -29,7 +29,7 @@ class DashboardHeader extends StatelessWidget {
             ),
           ),
           Text(
-            'Welcome back!',
+            AppStrings.welcomeBack,
             style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onPrimary.withValues(alpha: 0.8)),
           ),
         ],

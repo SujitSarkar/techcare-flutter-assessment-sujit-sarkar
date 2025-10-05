@@ -82,7 +82,7 @@ class RecentTransactionsWidget extends StatelessWidget {
             Icon(Icons.receipt_long_outlined, size: 48, color: theme.colorScheme.onSurface.withValues(alpha: 0.5)),
             const SizedBox(height: 12),
             Text(
-              'No recent transactions',
+              AppStrings.noRecentTransactions,
               style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
             ),
           ],

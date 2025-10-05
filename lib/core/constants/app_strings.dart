@@ -70,8 +70,11 @@ class AppStrings {
   // Dashboard Page
   static const String dashboard = 'Dashboard';
   static const String totalBalance = 'Total Balance';
+  static const String welcomeBack = 'Welcome back!';
   static const String spendingOverview = 'Spending Overview';
   static const String recentTransactions = 'Recent Transactions';
+  static const String noRecentTransactions = 'No recent transactions';
+  static const String noSpendingDataAvailable = 'No spending data available';
   static const String viewAll = 'View All';
 
   // Analytics Page

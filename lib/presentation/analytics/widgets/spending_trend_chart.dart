@@ -183,7 +183,7 @@ class _SpendingTrendChartState extends State<SpendingTrendChart> with TickerProv
                             if (index < widget.monthlyTrend.length) {
                               final trend = widget.monthlyTrend[index];
                               return LineTooltipItem(
-                                '${trend.month}\n${AppStrings.income}: \$${trend.income.toStringAsFixed(0)}\n${AppStrings.expense}: \$${trend.expense.toStringAsFixed(0)}',
+                                '${trend.month}\n${AppStrings.income}: ${AppStrings.currencySymbol}${trend.income.toStringAsFixed(0)}\n${AppStrings.expense}: ${AppStrings.currencySymbol}${trend.expense.toStringAsFixed(0)}',
                                 TextStyle(color: Theme.of(context).colorScheme.onSurface, fontSize: 12),
                               );
                             }
