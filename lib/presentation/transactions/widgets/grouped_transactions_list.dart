@@ -12,7 +12,10 @@ class GroupedTransactionsList extends StatelessWidget {
   final VoidCallback? onLoadMore;
   final Function(Transaction)? onEditTransaction;
   final Function(Transaction)? onTap;
-  final Function(String)? onDeleteTransaction;
+  final Function(Transaction)? onDeleteTransaction;
+  final bool shrinkWrap;
+  final ScrollPhysics? physics;
+  final EdgeInsets? padding;
 
   const GroupedTransactionsList({
     super.key,
@@ -23,6 +26,9 @@ class GroupedTransactionsList extends StatelessWidget {
     this.onEditTransaction,
     this.onTap,
     this.onDeleteTransaction,
+    this.shrinkWrap = false,
+    this.physics,
+    this.padding,
   });
 
   @override
@@ -30,7 +36,9 @@ class GroupedTransactionsList extends StatelessWidget {
     final groupedTransactions = _groupTransactionsByDate(transactions);
 
     return ListView.builder(
-      padding: const EdgeInsets.only(bottom: 60),
+      shrinkWrap: shrinkWrap,
+      physics: physics,
+      padding: padding,
       controller: scrollController,
       itemCount: groupedTransactions.length + (isLoadingMore ? 1 : 0),
       itemBuilder: (context, index) {
@@ -67,7 +75,7 @@ class GroupedTransactionsList extends StatelessWidget {
               (transaction) => TransactionItem(
                 transaction: transaction,
                 onEdit: () => onEditTransaction?.call(transaction),
-                onDelete: () => onDeleteTransaction?.call(transaction.id ?? ''),
+                onDelete: () => onDeleteTransaction?.call(transaction),
                 onTap: () => onTap?.call(transaction),
               ),
             ),
