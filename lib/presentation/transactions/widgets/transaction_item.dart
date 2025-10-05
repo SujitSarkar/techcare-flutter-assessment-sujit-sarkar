@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:take_home/core/constants/app_color.dart';
 import 'package:take_home/core/constants/app_strings.dart';
+import 'package:take_home/core/decorations/app_decorations.dart';
 import 'package:take_home/core/utils/utils.dart';
 import 'package:take_home/domain/entities/transaction.dart';
 
@@ -45,18 +46,7 @@ class TransactionItem extends StatelessWidget {
       },
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-        decoration: BoxDecoration(
-          color: theme.cardColor,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: theme.shadowColor.withValues(alpha: 0.1),
-              spreadRadius: 1,
-              blurRadius: 4,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
+        decoration: AppDecorations.cardDecoration(context),
         child: InkWell(
           onTap: () => onTap?.call(),
           borderRadius: BorderRadius.circular(12),
