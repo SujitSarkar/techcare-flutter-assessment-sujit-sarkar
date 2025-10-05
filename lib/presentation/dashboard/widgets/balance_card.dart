@@ -133,15 +133,15 @@ class _BalanceCardState extends State<BalanceCard> with TickerProviderStateMixin
                       animation: Listenable.merge([_numberAnimation, _flipAnimation]),
                       builder: (context, child) {
                         final animatedBalance = widget.totalBalance * _numberAnimation.value;
+                        final formatted = '${AppStrings.currencySymbol} ${animatedBalance.toStringAsFixed(2)}';
+                        final hidden = List.filled(formatted.length, '•').join();
                         return Transform(
                           alignment: Alignment.center,
                           transform: Matrix4.identity()
                             ..setEntry(3, 2, 0.001)
-                            ..rotateY(_flipAnimation.value * 3.14159),
+                            ..rotateX(_flipAnimation.value * 3.14159),
                           child: Text(
-                            widget.isBalanceVisible
-                                ? '${AppStrings.currencySymbol} ${animatedBalance.toStringAsFixed(2)}'
-                                : '••••••',
+                            widget.isBalanceVisible ? formatted : hidden,
                             style: theme.textTheme.headlineLarge?.copyWith(
                               color: theme.colorScheme.onSurface,
                               fontWeight: FontWeight.bold,
