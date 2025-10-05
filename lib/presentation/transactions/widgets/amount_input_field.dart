@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:take_home/core/constants/app_strings.dart';
+import 'package:take_home/core/constants/app_regex.dart';
+import 'package:take_home/utils/form_validators.dart';
 
 class AmountInputField extends StatefulWidget {
   final TextEditingController controller;
@@ -28,7 +30,7 @@ class _AmountInputFieldState extends State<AmountInputField> {
           decoration: BoxDecoration(
             color: theme.colorScheme.surfaceContainerHighest,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: theme.colorScheme.outline.withOpacity(0.2)),
+            border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.2)),
           ),
           child: Row(
             children: [
@@ -44,12 +46,15 @@ class _AmountInputFieldState extends State<AmountInputField> {
                 child: TextFormField(
                   controller: widget.controller,
                   keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                  inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9.,]')), _AmountInputFormatter()],
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(AppRegex.allowedAmountChars),
+                    _AmountInputFormatter(),
+                  ],
                   style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
                   decoration: InputDecoration(
                     hintText: AppStrings.enterAmount,
                     hintStyle: theme.textTheme.headlineSmall?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant.withOpacity(0.6),
+                      color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
                     ),
                     border: InputBorder.none,
                     contentPadding: EdgeInsets.zero,
@@ -57,17 +62,7 @@ class _AmountInputFieldState extends State<AmountInputField> {
                   onChanged: (value) {
                     widget.onChanged?.call(value);
                   },
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return AppStrings.amountRequired;
-                    }
-                    final cleanValue = value.replaceAll(',', '');
-                    final amount = double.tryParse(cleanValue);
-                    if (amount == null || amount <= 0) {
-                      return AppStrings.amountMustBeGreaterThanZero;
-                    }
-                    return null;
-                  },
+                  validator: FormValidators.amountInputValidator,
                 ),
               ),
             ],
@@ -86,7 +81,7 @@ class _AmountInputFormatter extends TextInputFormatter {
     }
 
     // Remove all non-digit characters except decimal point
-    String cleanText = newValue.text.replaceAll(RegExp(r'[^\d.]'), '');
+    String cleanText = newValue.text.replaceAll(AppRegex.nonDigitExceptDot, '');
 
     // Ensure only one decimal point
     if (cleanText.split('.').length > 2) {

@@ -10,6 +10,7 @@ import 'package:take_home/presentation/transactions/bloc/transactions_bloc.dart'
 import 'package:take_home/presentation/transactions/widgets/amount_input_field.dart';
 import 'package:take_home/presentation/transactions/widgets/category_selection_chips.dart';
 import 'package:take_home/presentation/transactions/widgets/transaction_type_selector.dart';
+import 'package:take_home/utils/form_validators.dart';
 
 class AddTransactionPage extends StatefulWidget {
   final TransactionType initialType;
@@ -150,15 +151,9 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
                     contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                   ),
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return AppStrings.titleRequired;
-                    }
-                    if (value.length > 100) {
-                      return AppStrings.titleMaxLength;
-                    }
-                    return null;
-                  },
+                  validator: (value) =>
+                      FormValidators.requiredTextValidator(value, message: AppStrings.titleRequired) ??
+                      FormValidators.maxLengthValidator(value, 100, message: AppStrings.titleMaxLength),
                   maxLength: 100,
                 ),
                 const SizedBox(height: 12),
@@ -181,12 +176,7 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                   minLines: 3,
                   textCapitalization: TextCapitalization.sentences,
                   maxLength: 500,
-                  validator: (value) {
-                    if (value != null && value.length > 500) {
-                      return AppStrings.descriptionMaxLength;
-                    }
-                    return null;
-                  },
+                  validator: FormValidators.descriptionLengthValidator,
                 ),
                 const SizedBox(height: 12),
 
@@ -336,13 +326,12 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
     // Validate amount
     final amountText = _amountController.text.replaceAll(',', '');
     final amount = double.tryParse(amountText);
-    if (amount == null || amount <= 0) {
+    if (!FormValidators.doubleAmountValidator(amount)) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppStrings.amountMustBeGreaterThanZero)));
       return;
     }
 
     // Validate date
-    final now = DateTime.now();
     final selectedDateTime = DateTime(
       _selectedDate.year,
       _selectedDate.month,
@@ -350,7 +339,7 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
       _selectedTime?.hour ?? 0,
       _selectedTime?.minute ?? 0,
     );
-    if (selectedDateTime.isAfter(now)) {
+    if (!FormValidators.dateNotInFutureValidator(selectedDateTime)) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppStrings.dateCannotBeInFuture)));
       return;
     }
