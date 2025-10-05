@@ -127,74 +127,6 @@ class _TransactionsPageState extends State<TransactionsPage> with TickerProvider
     _searchQuery.value = null;
   }
 
-  void _showFilterBottomSheet(BuildContext context) {
-    final state = _transactionBloc.state;
-    if (state is! TransactionsLoadedState) return;
-
-    // Get categories from CategoryBloc
-    final categoryState = context.read<CategoryBloc>().state;
-    List<String> availableCategories = [];
-
-    if (categoryState is CategoryLoadedState) {
-      availableCategories = categoryState.categories
-          .map((category) => category.name ?? '')
-          .where((name) => name.isNotEmpty)
-          .toList();
-    }
-
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => TransactionFilterBottomSheet(
-        startDate: state.startDate,
-        endDate: state.endDate,
-        selectedCategories: state.selectedCategories,
-        minAmount: state.minAmount,
-        maxAmount: state.maxAmount,
-        transactionType: state.transactionType,
-        availableCategories: availableCategories,
-        onApplyFilters:
-            ({
-              DateTime? startDate,
-              DateTime? endDate,
-              List<String> selectedCategories = const [],
-              double? minAmount,
-              double? maxAmount,
-              TransactionType? transactionType,
-            }) {
-              _startDate = startDate;
-              _endDate = endDate;
-              _selectedCategories = selectedCategories;
-              _minAmount = minAmount;
-              _maxAmount = maxAmount;
-              _transactionType = transactionType;
-
-              _transactionBloc.add(
-                LoadTransactionsEvent(
-                  searchQuery: _searchQuery.value,
-                  startDate: startDate,
-                  endDate: endDate,
-                  selectedCategories: selectedCategories,
-                  minAmount: minAmount,
-                  maxAmount: maxAmount,
-                  transactionType: transactionType,
-                ),
-              );
-            },
-        onResetFilters: () {
-          _startDate = null;
-          _endDate = null;
-          _selectedCategories = [];
-          _minAmount = null;
-          _maxAmount = null;
-          _transactionType = null;
-          _transactionBloc.add(ResetFiltersEvent());
-        },
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -344,6 +276,74 @@ class _TransactionsPageState extends State<TransactionsPage> with TickerProvider
     );
   }
 
+  void _showFilterBottomSheet(BuildContext context) {
+    final state = _transactionBloc.state;
+    if (state is! TransactionsLoadedState) return;
+
+    // Get categories from CategoryBloc
+    final categoryState = context.read<CategoryBloc>().state;
+    List<String> availableCategories = [];
+
+    if (categoryState is CategoryLoadedState) {
+      availableCategories = categoryState.categories
+          .map((category) => category.name ?? '')
+          .where((name) => name.isNotEmpty)
+          .toList();
+    }
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => TransactionFilterBottomSheet(
+        startDate: state.startDate,
+        endDate: state.endDate,
+        selectedCategories: state.selectedCategories,
+        minAmount: state.minAmount,
+        maxAmount: state.maxAmount,
+        transactionType: state.transactionType,
+        availableCategories: availableCategories,
+        onApplyFilters:
+            ({
+              DateTime? startDate,
+              DateTime? endDate,
+              List<String> selectedCategories = const [],
+              double? minAmount,
+              double? maxAmount,
+              TransactionType? transactionType,
+            }) {
+              _startDate = startDate;
+              _endDate = endDate;
+              _selectedCategories = selectedCategories;
+              _minAmount = minAmount;
+              _maxAmount = maxAmount;
+              _transactionType = transactionType;
+
+              _transactionBloc.add(
+                LoadTransactionsEvent(
+                  searchQuery: _searchQuery.value,
+                  startDate: startDate,
+                  endDate: endDate,
+                  selectedCategories: selectedCategories,
+                  minAmount: minAmount,
+                  maxAmount: maxAmount,
+                  transactionType: transactionType,
+                ),
+              );
+            },
+        onResetFilters: () {
+          _startDate = null;
+          _endDate = null;
+          _selectedCategories = [];
+          _minAmount = null;
+          _maxAmount = null;
+          _transactionType = null;
+          _transactionBloc.add(ResetFiltersEvent());
+        },
+      ),
+    );
+  }
+
   void _showDeleteConfirmation(BuildContext context, Transaction transaction) {
     ConfirmationDialog.showDeleteTransactionConfirmation(
       context,
@@ -360,13 +360,12 @@ class _TransactionsPageState extends State<TransactionsPage> with TickerProvider
       builder: (context) => TransactionDetailsModal(
         transaction: transaction,
         onEdit: () {
-          Navigator.of(context).pop();
           Navigator.of(
             context,
           ).push(MaterialPageRoute(builder: (context) => EditTransactionPage(transaction: transaction)));
         },
         onDelete: () {
-          _showDeleteConfirmation(context, transaction);
+          _transactionBloc.add(DeleteTransactionEvent(transactionId: transaction.id ?? ''));
         },
       ),
     );
