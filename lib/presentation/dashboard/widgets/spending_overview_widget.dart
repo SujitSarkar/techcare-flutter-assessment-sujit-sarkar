@@ -92,7 +92,7 @@ class _SpendingOverviewWidgetState extends State<SpendingOverviewWidget> with Ti
                       },
                     ),
                     sectionsSpace: 2,
-                    centerSpaceRadius: 60,
+                    centerSpaceRadius: 50,
                     sections: _buildPieChartSections(theme),
                   ),
                 );
@@ -109,16 +109,7 @@ class _SpendingOverviewWidgetState extends State<SpendingOverviewWidget> with Ti
 
   List<PieChartSectionData> _buildPieChartSections(ThemeData theme) {
     final totalSpending = widget.categorySpending.values.fold(0.0, (sum, amount) => sum + amount);
-    final colors = [
-      Colors.blue,
-      Colors.green,
-      Colors.orange,
-      Colors.purple,
-      Colors.red,
-      Colors.teal,
-      Colors.pink,
-      Colors.indigo,
-    ];
+    final colors = widget.categories.map((category) => category.color).toList();
 
     return widget.categorySpending.entries.map((entry) {
       final index = widget.categorySpending.keys.toList().indexOf(entry.key);
@@ -138,16 +129,7 @@ class _SpendingOverviewWidgetState extends State<SpendingOverviewWidget> with Ti
   }
 
   Widget _buildLegend(ThemeData theme) {
-    final colors = [
-      Colors.blue,
-      Colors.green,
-      Colors.orange,
-      Colors.purple,
-      Colors.red,
-      Colors.teal,
-      Colors.pink,
-      Colors.indigo,
-    ];
+    final colors = widget.categories.map((category) => category.color).toList();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -159,7 +141,7 @@ class _SpendingOverviewWidgetState extends State<SpendingOverviewWidget> with Ti
           margin: const EdgeInsets.only(bottom: 8),
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           decoration: BoxDecoration(
-            color: isTouched ? colors[index % colors.length].withValues(alpha: 0.1) : Colors.transparent,
+            color: isTouched ? colors[index % colors.length]?.withValues(alpha: 0.1) : Colors.transparent,
             borderRadius: BorderRadius.circular(8),
           ),
           child: Row(
