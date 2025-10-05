@@ -174,6 +174,7 @@ class TransactionsBloc extends Bloc<TransactionsEvent, TransactionsState> {
       try {
         final addedTransaction = await addTransaction.call(event.transaction);
         emit(TransactionAddedState(transaction: addedTransaction));
+        await Future.delayed(const Duration(milliseconds: 100));
 
         final updatedTransactions = List<Transaction>.from(currentState.transactions)..insert(0, addedTransaction);
         final filteredTransactions = updatedTransactions;
@@ -201,6 +202,7 @@ class TransactionsBloc extends Bloc<TransactionsEvent, TransactionsState> {
       try {
         final updatedTransaction = await updateTransaction.call(event.transaction);
         emit(TransactionUpdatedState(transaction: updatedTransaction));
+        await Future.delayed(const Duration(milliseconds: 100));
 
         final int index = currentState.transactions.indexWhere(
           (transaction) => transaction.id == updatedTransaction.id,
@@ -233,6 +235,7 @@ class TransactionsBloc extends Bloc<TransactionsEvent, TransactionsState> {
         final success = await deleteTransaction.call(event.transactionId);
         if (success) {
           emit(TransactionDeletedState(transactionId: event.transactionId));
+          await Future.delayed(const Duration(milliseconds: 100));
 
           final int index = currentState.transactions.indexWhere(
             (transaction) => transaction.id == event.transactionId,
