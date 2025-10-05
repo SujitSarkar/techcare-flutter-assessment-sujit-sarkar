@@ -62,11 +62,10 @@ class TakeHomeApp extends StatelessWidget {
       ],
       child: MultiBlocProvider(
         providers: [
+          BlocProvider<BottomNavBarBloc>(create: (context) => BottomNavBarBloc()),
           BlocProvider<CategoryBloc>(
             create: (context) => CategoryBloc(getCategories: GetCategories(context.read<CategoryRepository>())),
           ),
-          BlocProvider<BottomNavBarBloc>(create: (context) => BottomNavBarBloc()),
-          BlocProvider<DashboardBloc>(create: (context) => DashboardBloc()),
           BlocProvider<TransactionsBloc>(
             create: (context) => TransactionsBloc(
               getTransactions: GetTransactions(repository: context.read<TransactionRepository>()),
@@ -75,6 +74,14 @@ class TakeHomeApp extends StatelessWidget {
               deleteTransaction: DeleteTransaction(repository: context.read<TransactionRepository>()),
             ),
           ),
+          BlocProvider<DashboardBloc>(
+            create: (context) => DashboardBloc(
+              getTransactions: GetTransactions(repository: context.read<TransactionRepository>()),
+              getCategories: GetCategories(context.read<CategoryRepository>()),
+              transactionsBloc: context.read<TransactionsBloc>(),
+            ),
+          ),
+
           BlocProvider<AnalyticsBloc>(
             create: (context) =>
                 AnalyticsBloc(getAnalytics: GetAnalytics(repository: context.read<AnalyticsRepository>())),

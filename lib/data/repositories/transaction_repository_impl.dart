@@ -21,25 +21,6 @@ class TransactionRepositoryImpl implements TransactionRepository {
   Future<TransactionResponse> getTransactions({int? page, int? limit}) async {
     final isOnline = await networkConnection.checkConnection();
     try {
-      // Check if cache is valid and we're requesting the first page
-      if (page == null || page == 1) {
-        final isCacheValid = await localDataSource.isCacheValid();
-        if (isCacheValid) {
-          final cachedTransactions = await localDataSource.getCachedTransactions();
-          if (cachedTransactions.isNotEmpty) {
-            // Return cached data
-            return TransactionResponse(
-              transactions: cachedTransactions,
-              currentPage: 1,
-              totalPages: 1,
-              totalItems: cachedTransactions.length,
-              itemsPerPage: cachedTransactions.length,
-              hasMore: false,
-            );
-          }
-        }
-      }
-
       // If offline, try to return cached data even if expired
       if (!isOnline) {
         final cachedTransactions = await localDataSource.getCachedTransactions();

@@ -69,6 +69,10 @@ class AppStrings {
 
   // Dashboard Page
   static const String dashboard = 'Dashboard';
+  static const String totalBalance = 'Total Balance';
+  static const String spendingOverview = 'Spending Overview';
+  static const String recentTransactions = 'Recent Transactions';
+  static const String viewAll = 'View All';
 
   // Analytics Page
   static const String analyticsPage = 'Analytics';
