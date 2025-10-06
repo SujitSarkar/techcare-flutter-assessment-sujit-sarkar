@@ -43,6 +43,15 @@ class _SpendingTrendChartState extends State<SpendingTrendChart> with TickerProv
     super.dispose();
   }
 
+  @override
+  void didUpdateWidget(covariant SpendingTrendChart oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.monthlyTrend != widget.monthlyTrend) {
+      _calculateBounds();
+      _animationController.forward(from: 0);
+    }
+  }
+
   void _calculateBounds() {
     if (widget.monthlyTrend.isEmpty) return;
 
@@ -82,8 +91,14 @@ class _SpendingTrendChartState extends State<SpendingTrendChart> with TickerProv
                     gridData: FlGridData(
                       show: true,
                       drawVerticalLine: true,
-                      horizontalInterval: (_maxY - _minY) / 5,
-                      verticalInterval: (_maxX - _minX) / 6,
+                      horizontalInterval: (() {
+                        final interval = (_maxY - _minY) / 5;
+                        return (interval <= 0 ? 1 : interval).toDouble();
+                      })(),
+                      verticalInterval: (() {
+                        final interval = (_maxX - _minX) / 6;
+                        return (interval <= 0 ? 1 : interval).toDouble();
+                      })(),
                       getDrawingHorizontalLine: (value) {
                         return FlLine(
                           color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
@@ -105,7 +120,10 @@ class _SpendingTrendChartState extends State<SpendingTrendChart> with TickerProv
                         sideTitles: SideTitles(
                           showTitles: true,
                           reservedSize: 30,
-                          interval: (_maxX - _minX) / 6,
+                          interval: (() {
+                            final interval = (_maxX - _minX) / 6;
+                            return (interval <= 0 ? 1 : interval).toDouble();
+                          })(),
                           getTitlesWidget: (value, meta) {
                             if (value.toInt() < widget.monthlyTrend.length) {
                               final month = widget.monthlyTrend[value.toInt()].month;
@@ -118,7 +136,10 @@ class _SpendingTrendChartState extends State<SpendingTrendChart> with TickerProv
                       leftTitles: AxisTitles(
                         sideTitles: SideTitles(
                           showTitles: true,
-                          interval: (_maxY - _minY) / 5,
+                          interval: (() {
+                            final interval = (_maxY - _minY) / 5;
+                            return (interval <= 0 ? 1 : interval).toDouble();
+                          })(),
                           getTitlesWidget: (value, meta) {
                             return Text(
                               '${(value / 1000).toStringAsFixed(0)}k',
@@ -203,8 +224,8 @@ class _SpendingTrendChartState extends State<SpendingTrendChart> with TickerProv
                       ],
                     ),
                   ),
-                  duration: const Duration(milliseconds: 300),
-                  curve: Curves.easeInOut,
+                  duration: Duration.zero,
+                  curve: Curves.linear,
                 );
               },
             ),
