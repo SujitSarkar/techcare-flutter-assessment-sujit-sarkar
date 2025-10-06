@@ -196,6 +196,8 @@ class DashboardShimmerWidget extends StatelessWidget {
             ),
           ),
 
+          const SliverToBoxAdapter(child: SizedBox(height: 16)),
+
           // Recent Transactions Skeleton
           SliverToBoxAdapter(
             child: Container(
