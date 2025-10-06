@@ -2,6 +2,8 @@ import 'package:take_home/core/utils/network_connection.dart';
 import 'package:take_home/domain/entities/analytics.dart';
 import 'package:take_home/domain/repositories/analytics_repository.dart';
 import 'package:take_home/data/datasources/analytics_remote_datasource.dart';
+import 'package:take_home/core/errors/failure.dart';
+import 'package:take_home/core/errors/result.dart';
 
 class AnalyticsRepositoryImpl implements AnalyticsRepository {
   final AnalyticsRemoteDataSource remoteDataSource;
@@ -10,16 +12,16 @@ class AnalyticsRepositoryImpl implements AnalyticsRepository {
   AnalyticsRepositoryImpl({required this.remoteDataSource, required this.networkConnection});
 
   @override
-  Future<Analytics> getAnalytics({DateTime? startDate, DateTime? endDate}) async {
+  Future<Result<Failure, Analytics>> getAnalytics({DateTime? startDate, DateTime? endDate}) async {
     final isOnline = await networkConnection.checkConnection();
     if (isOnline) {
       try {
         final analyticsModel = await remoteDataSource.getAnalytics(startDate: startDate, endDate: endDate);
-        return analyticsModel;
+        return Success(analyticsModel);
       } catch (e) {
-        throw Exception('Failed to get analytics: $e');
+        return FailureResult(UnknownFailure('Failed to get analytics', cause: e));
       }
     }
-    throw Exception('No internet connection');
+    return const FailureResult(NetworkFailure('No internet connection'));
   }
 }

@@ -17,11 +17,10 @@ class AnalyticsBloc extends Bloc<AnalyticsEvent, AnalyticsState> {
   Future<void> _onGetAnalytics(GetAnalyticsEvent event, Emitter<AnalyticsState> emit) async {
     emit(AnalyticsLoadingState());
 
-    try {
-      final analytics = await getAnalytics.call(startDate: event.startDate, endDate: event.endDate);
-      emit(AnalyticsLoadedState(analytics: analytics));
-    } catch (e) {
-      emit(AnalyticsErrorState(message: e.toString()));
-    }
+    final result = await getAnalytics.call(startDate: event.startDate, endDate: event.endDate);
+    result.fold(
+      onSuccess: (analytics) => emit(AnalyticsLoadedState(analytics: analytics)),
+      onFailure: (failure) => emit(AnalyticsErrorState(message: failure.message)),
+    );
   }
 }

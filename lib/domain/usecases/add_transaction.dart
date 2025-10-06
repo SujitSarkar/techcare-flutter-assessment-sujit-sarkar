@@ -1,3 +1,5 @@
+import 'package:take_home/core/errors/failure.dart';
+import 'package:take_home/core/errors/result.dart';
 import 'package:take_home/domain/entities/transaction.dart';
 import 'package:take_home/domain/repositories/transaction_repository.dart';
 
@@ -6,7 +8,7 @@ class AddTransaction {
 
   AddTransaction({required this.repository});
 
-  Future<Transaction> call(Transaction transaction) async {
+  Future<Result<Failure, Transaction>> call(Transaction transaction) async {
     return await repository.addTransaction(transaction);
   }
 }

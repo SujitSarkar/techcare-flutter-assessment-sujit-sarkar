@@ -17,11 +17,10 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
   Future<void> _onFetchCategories(FetchCategoriesEvent event, Emitter<CategoryState> emit) async {
     emit(CategoryLoadingState());
 
-    try {
-      final categories = await getCategories();
-      emit(CategoryLoadedState(categories: categories));
-    } catch (e) {
-      emit(CategoryErrorState(message: e.toString()));
-    }
+    final result = await getCategories();
+    result.fold(
+      onSuccess: (categories) => emit(CategoryLoadedState(categories: categories)),
+      onFailure: (failure) => emit(CategoryErrorState(message: failure.message)),
+    );
   }
 }

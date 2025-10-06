@@ -5,6 +5,8 @@ import 'package:take_home/domain/entities/transaction_response.dart';
 import 'package:take_home/domain/entities/transaction.dart';
 import 'package:take_home/domain/repositories/transaction_repository.dart';
 import 'package:take_home/core/utils/network_connection.dart';
+import 'package:take_home/core/errors/failure.dart';
+import 'package:take_home/core/errors/result.dart';
 
 class TransactionRepositoryImpl implements TransactionRepository {
   final TransactionRemoteDataSource remoteDataSource;
@@ -18,23 +20,25 @@ class TransactionRepositoryImpl implements TransactionRepository {
   });
 
   @override
-  Future<TransactionResponse> getTransactions({int? page, int? limit}) async {
+  Future<Result<Failure, TransactionResponse>> getTransactions({int? page, int? limit}) async {
     final isOnline = await networkConnection.checkConnection();
     try {
       // If offline, try to return cached data even if expired
       if (!isOnline) {
         final cachedTransactions = await localDataSource.getCachedTransactions();
         if (cachedTransactions.isNotEmpty) {
-          return TransactionResponse(
-            transactions: cachedTransactions,
-            currentPage: 1,
-            totalPages: 1,
-            totalItems: cachedTransactions.length,
-            itemsPerPage: cachedTransactions.length,
-            hasMore: false,
+          return Success(
+            TransactionResponse(
+              transactions: cachedTransactions,
+              currentPage: 1,
+              totalPages: 1,
+              totalItems: cachedTransactions.length,
+              itemsPerPage: cachedTransactions.length,
+              hasMore: false,
+            ),
           );
         }
-        throw Exception('No internet connection and no cached data available');
+        return const FailureResult(NetworkFailure('No internet connection'));
       }
 
       // Fetch from remote if online
@@ -45,26 +49,28 @@ class TransactionRepositoryImpl implements TransactionRepository {
         await localDataSource.cacheTransactions(responseModel.transactions);
       }
 
-      return TransactionResponse(
-        transactions: responseModel.transactions.map((model) => model).toList(),
-        currentPage: responseModel.currentPage,
-        totalPages: responseModel.totalPages,
-        totalItems: responseModel.totalItems,
-        itemsPerPage: responseModel.itemsPerPage,
-        hasMore: responseModel.hasMore,
+      return Success(
+        TransactionResponse(
+          transactions: responseModel.transactions.map((model) => model).toList(),
+          currentPage: responseModel.currentPage,
+          totalPages: responseModel.totalPages,
+          totalItems: responseModel.totalItems,
+          itemsPerPage: responseModel.itemsPerPage,
+          hasMore: responseModel.hasMore,
+        ),
       );
     } catch (e) {
-      throw Exception('Failed to fetch transactions: $e');
+      return FailureResult(UnknownFailure('Failed to fetch transactions', cause: e));
     }
   }
 
   @override
-  Future<Transaction> addTransaction(Transaction transaction) async {
+  Future<Result<Failure, Transaction>> addTransaction(Transaction transaction) async {
     try {
       final isOnline = await networkConnection.checkConnection();
 
       if (!isOnline) {
-        throw Exception('No internet connection. Cannot add transaction.');
+        return const FailureResult(NetworkFailure('No internet connection. Cannot add transaction.'));
       }
 
       final transactionModel = TransactionModel(
@@ -82,19 +88,19 @@ class TransactionRepositoryImpl implements TransactionRepository {
       // Clear cache after successful addition
       await localDataSource.clearCache();
 
-      return createdTransaction;
+      return Success(createdTransaction);
     } catch (e) {
-      throw Exception('Failed to add transaction: $e');
+      return FailureResult(UnknownFailure('Failed to add transaction', cause: e));
     }
   }
 
   @override
-  Future<Transaction> updateTransaction(Transaction transaction) async {
+  Future<Result<Failure, Transaction>> updateTransaction(Transaction transaction) async {
     try {
       final isOnline = await networkConnection.checkConnection();
 
       if (!isOnline) {
-        throw Exception('No internet connection. Cannot update transaction.');
+        return const FailureResult(NetworkFailure('No internet connection. Cannot update transaction.'));
       }
 
       final transactionModel = TransactionModel(
@@ -112,19 +118,19 @@ class TransactionRepositoryImpl implements TransactionRepository {
       // Clear cache after successful update
       await localDataSource.clearCache();
 
-      return updatedTransaction;
+      return Success(updatedTransaction);
     } catch (e) {
-      throw Exception('Failed to update transaction: $e');
+      return FailureResult(UnknownFailure('Failed to update transaction', cause: e));
     }
   }
 
   @override
-  Future<bool> deleteTransaction(String transactionId) async {
+  Future<Result<Failure, bool>> deleteTransaction(String transactionId) async {
     try {
       final isOnline = await networkConnection.checkConnection();
 
       if (!isOnline) {
-        throw Exception('No internet connection. Cannot delete transaction.');
+        return const FailureResult(NetworkFailure('No internet connection. Cannot delete transaction.'));
       }
 
       final result = await remoteDataSource.deleteTransaction(transactionId);
@@ -134,9 +140,9 @@ class TransactionRepositoryImpl implements TransactionRepository {
         await localDataSource.clearCache();
       }
 
-      return result;
+      return Success(result);
     } catch (e) {
-      throw Exception('Failed to delete transaction: $e');
+      return FailureResult(UnknownFailure('Failed to delete transaction', cause: e));
     }
   }
 }

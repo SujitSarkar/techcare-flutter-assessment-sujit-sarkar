@@ -1,3 +1,5 @@
+import 'package:take_home/core/errors/failure.dart';
+import 'package:take_home/core/errors/result.dart';
 import 'package:take_home/domain/repositories/transaction_repository.dart';
 
 class DeleteTransaction {
@@ -5,7 +7,7 @@ class DeleteTransaction {
 
   DeleteTransaction({required this.repository});
 
-  Future<bool> call(String transactionId) async {
+  Future<Result<Failure, bool>> call(String transactionId) async {
     return await repository.deleteTransaction(transactionId);
   }
 }

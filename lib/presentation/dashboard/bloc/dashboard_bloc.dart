@@ -44,16 +44,21 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
 
   Future<void> _onLoadDashboardData(LoadDashboardDataEvent event, Emitter<DashboardState> emit) async {
     emit(DashboardLoadingState());
+    // Load transactions and categories (handle Result types)
+    final transactionsResult = await getTransactions.call();
+    final categoriesResult = await getCategories.call();
 
-    try {
-      // Load transactions and categories in parallel
-      final transactionsResponse = await getTransactions.call();
-      final categories = await getCategories.call();
-
-      await _updateDashboardData(emit, transactionsResponse.transactions, categories);
-    } catch (e) {
-      emit(DashboardErrorState(message: e.toString()));
-    }
+    transactionsResult.fold(
+      onSuccess: (transactionsResponse) {
+        categoriesResult.fold(
+          onFailure: (failure) => emit(DashboardErrorState(message: failure.message)),
+          onSuccess: (categories) async {
+            await _updateDashboardData(emit, transactionsResponse.transactions, categories);
+          },
+        );
+      },
+      onFailure: (failure) => emit(DashboardErrorState(message: failure.message)),
+    );
   }
 
   Future<void> _onUpdateDashboardFromTransactions(

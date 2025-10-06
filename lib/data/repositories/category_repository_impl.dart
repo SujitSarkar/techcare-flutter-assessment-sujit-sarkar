@@ -4,6 +4,8 @@ import 'package:take_home/domain/entities/category.dart';
 import 'package:take_home/domain/repositories/category_repository.dart';
 import 'package:take_home/core/constants/app_strings.dart';
 import 'package:take_home/core/utils/network_connection.dart';
+import 'package:take_home/core/errors/failure.dart';
+import 'package:take_home/core/errors/result.dart';
 
 class CategoryRepositoryImpl implements CategoryRepository {
   final CategoryRemoteDataSource remoteDataSource;
@@ -17,7 +19,7 @@ class CategoryRepositoryImpl implements CategoryRepository {
   });
 
   @override
-  Future<List<Category>> getCategories() async {
+  Future<Result<Failure, List<Category>>> getCategories() async {
     final isOnline = await networkConnection.checkConnection();
     try {
       // Check if cache is valid
@@ -26,7 +28,7 @@ class CategoryRepositoryImpl implements CategoryRepository {
         final cachedCategories = await localDataSource.getCachedCategories();
         if (cachedCategories.isNotEmpty) {
           // Return cached data
-          return cachedCategories.map((model) => model).toList();
+          return Success(cachedCategories.map((model) => model).toList());
         }
       }
 
@@ -34,9 +36,9 @@ class CategoryRepositoryImpl implements CategoryRepository {
       if (!isOnline) {
         final cachedCategories = await localDataSource.getCachedCategories();
         if (cachedCategories.isNotEmpty) {
-          return cachedCategories.map((model) => model).toList();
+          return Success(cachedCategories.map((model) => model).toList());
         }
-        throw Exception('No internet connection and no cached data available');
+        return const FailureResult(NetworkFailure('No internet connection and no cached data available'));
       }
 
       // Fetch from remote if online
@@ -45,9 +47,9 @@ class CategoryRepositoryImpl implements CategoryRepository {
       // Cache the data
       await localDataSource.cacheCategories(categoryModels);
 
-      return categoryModels.map((model) => model).toList();
+      return Success(categoryModels.map((model) => model).toList());
     } catch (e) {
-      throw Exception('${AppStrings.failedToFetchCategories}$e');
+      return FailureResult(UnknownFailure('${AppStrings.failedToFetchCategories}', cause: e));
     }
   }
 }
