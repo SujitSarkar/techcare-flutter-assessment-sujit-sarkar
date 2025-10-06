@@ -1,5 +1,5 @@
 import 'package:take_home/domain/repositories/transaction_repository.dart';
-import 'package:take_home/data/models/transaction_response.dart';
+import 'package:take_home/domain/entities/transaction_response.dart';
 
 class GetTransactions {
   final TransactionRepository repository;

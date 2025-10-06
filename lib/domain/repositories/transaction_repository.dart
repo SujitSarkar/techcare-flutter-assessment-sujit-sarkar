@@ -1,5 +1,5 @@
 import 'package:take_home/domain/entities/transaction.dart';
-import 'package:take_home/data/models/transaction_response.dart';
+import 'package:take_home/domain/entities/transaction_response.dart';
 
 abstract class TransactionRepository {
   Future<TransactionResponse> getTransactions({int? page, int? limit});

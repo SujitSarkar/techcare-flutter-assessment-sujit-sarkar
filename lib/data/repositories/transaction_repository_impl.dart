@@ -1,7 +1,7 @@
 import 'package:take_home/data/datasources/transaction_remote_datasource.dart';
 import 'package:take_home/data/datasources/transaction_local_datasource.dart';
 import 'package:take_home/data/models/transaction_model.dart';
-import 'package:take_home/data/models/transaction_response.dart';
+import 'package:take_home/domain/entities/transaction_response.dart';
 import 'package:take_home/domain/entities/transaction.dart';
 import 'package:take_home/domain/repositories/transaction_repository.dart';
 import 'package:take_home/core/utils/network_connection.dart';
