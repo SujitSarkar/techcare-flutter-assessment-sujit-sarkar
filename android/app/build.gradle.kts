@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
@@ -5,9 +7,24 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+// Load local.properties
+val localProperties = Properties().apply {
+    val file = rootProject.file("local.properties")
+    if (file.exists()) {
+        file.inputStream().use { load(it) }
+    }
+}
+
+val minSdkVersionInt = localProperties.getProperty("flutter.minSdkVersion")!!.toInt()
+val targetSdkVersionInt = localProperties.getProperty("flutter.targetSdkVersion")!!.toInt()
+val compileSdkVersionInt = localProperties.getProperty("flutter.compileSdkVersion")!!.toInt()
+val appVersionCodeInt = (localProperties.getProperty("flutter.versionCode") ?: "100").toInt()
+val appVersionName = localProperties.getProperty("flutter.versionName") ?: "1.0.0"
+
+
 android {
-    namespace = "com.example.take_home"
-    compileSdk = flutter.compileSdkVersion
+    namespace = "com.example.finance_tracker"
+    compileSdk = compileSdkVersionInt
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
@@ -21,13 +38,13 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.example.take_home"
+        applicationId = "com.example.finance_tracker"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = flutter.minSdkVersion
-        targetSdk = flutter.targetSdkVersion
-        versionCode = flutter.versionCode
-        versionName = flutter.versionName
+        minSdk = minSdkVersionInt
+        targetSdk = targetSdkVersionInt
+        versionCode = appVersionCodeInt
+        versionName = appVersionName
     }
 
     buildTypes {
