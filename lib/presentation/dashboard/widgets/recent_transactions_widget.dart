@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'package:take_home/core/constants/app_strings.dart';
-import 'package:take_home/domain/entities/transaction.dart';
-import 'package:take_home/presentation/transactions/widgets/grouped_transactions_list.dart';
+import 'package:finance_tracker/core/constants/app_strings.dart';
+import 'package:finance_tracker/domain/entities/transaction.dart';
+import 'package:finance_tracker/presentation/transactions/widgets/grouped_transactions_list.dart';
 
 class RecentTransactionsWidget extends StatelessWidget {
   final List<Transaction> transactions;

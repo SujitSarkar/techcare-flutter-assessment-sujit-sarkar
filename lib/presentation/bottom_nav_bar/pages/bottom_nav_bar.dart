@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:take_home/core/constants/app_strings.dart';
-import 'package:take_home/presentation/analytics/pages/analytics_page.dart';
-import 'package:take_home/presentation/bottom_nav_bar/bloc/bottom_nav_bar_bloc.dart';
-import 'package:take_home/presentation/dashboard/pages/dashboard_page.dart';
-import 'package:take_home/presentation/transactions/pages/transactions_page.dart';
+import 'package:finance_tracker/core/constants/app_strings.dart';
+import 'package:finance_tracker/presentation/analytics/pages/analytics_page.dart';
+import 'package:finance_tracker/presentation/bottom_nav_bar/bloc/bottom_nav_bar_bloc.dart';
+import 'package:finance_tracker/presentation/dashboard/pages/dashboard_page.dart';
+import 'package:finance_tracker/presentation/transactions/pages/transactions_page.dart';
 
 class BottomNavBar extends StatelessWidget {
   const BottomNavBar({super.key});

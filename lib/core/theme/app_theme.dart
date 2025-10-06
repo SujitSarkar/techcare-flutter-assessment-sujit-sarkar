@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:take_home/core/constants/app_color.dart';
+import 'package:finance_tracker/core/constants/app_color.dart';
 
 class AppThemes {
   const AppThemes._();

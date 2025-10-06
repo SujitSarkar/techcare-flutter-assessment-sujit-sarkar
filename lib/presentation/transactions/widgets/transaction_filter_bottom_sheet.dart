@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:take_home/core/constants/app_strings.dart';
-import 'package:take_home/core/widgets/date_range_widget.dart';
-import 'package:take_home/domain/entities/transaction.dart';
+import 'package:finance_tracker/core/constants/app_strings.dart';
+import 'package:finance_tracker/core/widgets/date_range_widget.dart';
+import 'package:finance_tracker/domain/entities/transaction.dart';
 
 class TransactionFilterBottomSheet extends StatefulWidget {
   final DateTime? startDate;

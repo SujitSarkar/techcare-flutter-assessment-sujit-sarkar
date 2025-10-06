@@ -1,7 +1,7 @@
-import 'package:take_home/core/errors/failure.dart';
-import 'package:take_home/core/errors/result.dart';
-import 'package:take_home/domain/entities/transaction.dart';
-import 'package:take_home/domain/repositories/transaction_repository.dart';
+import 'package:finance_tracker/core/errors/failure.dart';
+import 'package:finance_tracker/core/errors/result.dart';
+import 'package:finance_tracker/domain/entities/transaction.dart';
+import 'package:finance_tracker/domain/repositories/transaction_repository.dart';
 
 class AddTransaction {
   final TransactionRepository repository;

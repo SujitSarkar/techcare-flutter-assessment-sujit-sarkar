@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:take_home/core/constants/app_strings.dart';
-import 'package:take_home/presentation/analytics/widgets/custom_date_field.dart';
+import 'package:finance_tracker/core/constants/app_strings.dart';
+import 'package:finance_tracker/presentation/analytics/widgets/custom_date_field.dart';
 
 class CustomDateRangeWidget extends StatelessWidget {
   final DateTime? startDate;

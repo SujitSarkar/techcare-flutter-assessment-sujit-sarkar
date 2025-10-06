@@ -1,7 +1,7 @@
-import 'package:take_home/core/errors/failure.dart';
-import 'package:take_home/core/errors/result.dart';
-import 'package:take_home/domain/entities/analytics.dart';
-import 'package:take_home/domain/repositories/analytics_repository.dart';
+import 'package:finance_tracker/core/errors/failure.dart';
+import 'package:finance_tracker/core/errors/result.dart';
+import 'package:finance_tracker/domain/entities/analytics.dart';
+import 'package:finance_tracker/domain/repositories/analytics_repository.dart';
 
 class GetAnalytics {
   final AnalyticsRepository repository;

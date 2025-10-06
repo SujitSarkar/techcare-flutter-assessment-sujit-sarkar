@@ -1,4 +1,4 @@
-import 'package:take_home/data/models/transaction_model.dart';
+import 'package:finance_tracker/data/models/transaction_model.dart';
 
 class TransactionResponseModel {
   final List<TransactionModel> transactions;

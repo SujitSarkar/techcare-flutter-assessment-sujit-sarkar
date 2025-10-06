@@ -1,5 +1,5 @@
-import 'package:take_home/core/utils/utils.dart';
-import 'package:take_home/domain/entities/category.dart';
+import 'package:finance_tracker/core/utils/utils.dart';
+import 'package:finance_tracker/domain/entities/category.dart';
 
 class CategoryModel extends Category {
   const CategoryModel({

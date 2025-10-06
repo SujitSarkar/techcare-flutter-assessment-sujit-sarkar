@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:take_home/core/constants/app_strings.dart';
-import 'package:take_home/core/utils/debouncer.dart';
-import 'package:take_home/core/widgets/confirmation_dialog.dart';
-import 'package:take_home/core/widgets/error_widget.dart';
-import 'package:take_home/core/widgets/loading_mask.dart';
-import 'package:take_home/domain/entities/transaction.dart';
-import 'package:take_home/presentation/category/bloc/category_bloc.dart';
-import 'package:take_home/presentation/transactions/bloc/transactions_bloc.dart';
-import 'package:take_home/presentation/transactions/pages/edit_transaction_page.dart';
-import 'package:take_home/presentation/transactions/widgets/grouped_transactions_list.dart';
-import 'package:take_home/presentation/transactions/widgets/transaction_details_modal.dart';
-import 'package:take_home/presentation/transactions/widgets/transaction_empty_state.dart';
-import 'package:take_home/presentation/transactions/widgets/transaction_filter_bottom_sheet.dart';
-import 'package:take_home/presentation/transactions/widgets/transaction_shimmer.dart';
+import 'package:finance_tracker/core/constants/app_strings.dart';
+import 'package:finance_tracker/core/utils/debouncer.dart';
+import 'package:finance_tracker/core/widgets/confirmation_dialog.dart';
+import 'package:finance_tracker/core/widgets/error_widget.dart';
+import 'package:finance_tracker/core/widgets/loading_mask.dart';
+import 'package:finance_tracker/domain/entities/transaction.dart';
+import 'package:finance_tracker/presentation/category/bloc/category_bloc.dart';
+import 'package:finance_tracker/presentation/transactions/bloc/transactions_bloc.dart';
+import 'package:finance_tracker/presentation/transactions/pages/edit_transaction_page.dart';
+import 'package:finance_tracker/presentation/transactions/widgets/grouped_transactions_list.dart';
+import 'package:finance_tracker/presentation/transactions/widgets/transaction_details_modal.dart';
+import 'package:finance_tracker/presentation/transactions/widgets/transaction_empty_state.dart';
+import 'package:finance_tracker/presentation/transactions/widgets/transaction_filter_bottom_sheet.dart';
+import 'package:finance_tracker/presentation/transactions/widgets/transaction_shimmer.dart';
 
 class TransactionsPage extends StatefulWidget {
   const TransactionsPage({super.key});

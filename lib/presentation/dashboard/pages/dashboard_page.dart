@@ -2,22 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
 
-import 'package:take_home/core/constants/app_color.dart';
-import 'package:take_home/core/constants/app_strings.dart';
-import 'package:take_home/core/widgets/confirmation_dialog.dart';
-import 'package:take_home/core/widgets/error_widget.dart';
-import 'package:take_home/domain/entities/transaction.dart';
-import 'package:take_home/presentation/bottom_nav_bar/bloc/bottom_nav_bar_bloc.dart';
-import 'package:take_home/presentation/dashboard/bloc/dashboard_bloc.dart';
-import 'package:take_home/presentation/dashboard/widgets/dashboard_header.dart';
-import 'package:take_home/presentation/dashboard/widgets/balance_card.dart';
-import 'package:take_home/presentation/dashboard/widgets/spending_overview_widget.dart';
-import 'package:take_home/presentation/dashboard/widgets/recent_transactions_widget.dart';
-import 'package:take_home/presentation/dashboard/widgets/dashboard_shimmer_widget.dart';
-import 'package:take_home/presentation/transactions/bloc/transactions_bloc.dart';
-import 'package:take_home/presentation/transactions/pages/add_transaction_page.dart';
-import 'package:take_home/presentation/transactions/pages/edit_transaction_page.dart';
-import 'package:take_home/presentation/transactions/widgets/transaction_details_modal.dart';
+import 'package:finance_tracker/core/constants/app_color.dart';
+import 'package:finance_tracker/core/constants/app_strings.dart';
+import 'package:finance_tracker/core/widgets/confirmation_dialog.dart';
+import 'package:finance_tracker/core/widgets/error_widget.dart';
+import 'package:finance_tracker/domain/entities/transaction.dart';
+import 'package:finance_tracker/presentation/bottom_nav_bar/bloc/bottom_nav_bar_bloc.dart';
+import 'package:finance_tracker/presentation/dashboard/bloc/dashboard_bloc.dart';
+import 'package:finance_tracker/presentation/dashboard/widgets/dashboard_header.dart';
+import 'package:finance_tracker/presentation/dashboard/widgets/balance_card.dart';
+import 'package:finance_tracker/presentation/dashboard/widgets/spending_overview_widget.dart';
+import 'package:finance_tracker/presentation/dashboard/widgets/recent_transactions_widget.dart';
+import 'package:finance_tracker/presentation/dashboard/widgets/dashboard_shimmer_widget.dart';
+import 'package:finance_tracker/presentation/transactions/bloc/transactions_bloc.dart';
+import 'package:finance_tracker/presentation/transactions/pages/add_transaction_page.dart';
+import 'package:finance_tracker/presentation/transactions/pages/edit_transaction_page.dart';
+import 'package:finance_tracker/presentation/transactions/widgets/transaction_details_modal.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});

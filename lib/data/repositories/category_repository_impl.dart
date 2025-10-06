@@ -1,11 +1,11 @@
-import 'package:take_home/data/datasources/category_remote_datasource.dart';
-import 'package:take_home/data/datasources/category_local_datasource.dart';
-import 'package:take_home/domain/entities/category.dart';
-import 'package:take_home/domain/repositories/category_repository.dart';
-import 'package:take_home/core/constants/app_strings.dart';
-import 'package:take_home/core/utils/network_connection.dart';
-import 'package:take_home/core/errors/failure.dart';
-import 'package:take_home/core/errors/result.dart';
+import 'package:finance_tracker/data/datasources/category_remote_datasource.dart';
+import 'package:finance_tracker/data/datasources/category_local_datasource.dart';
+import 'package:finance_tracker/domain/entities/category.dart';
+import 'package:finance_tracker/domain/repositories/category_repository.dart';
+import 'package:finance_tracker/core/constants/app_strings.dart';
+import 'package:finance_tracker/core/utils/network_connection.dart';
+import 'package:finance_tracker/core/errors/failure.dart';
+import 'package:finance_tracker/core/errors/result.dart';
 
 class CategoryRepositoryImpl implements CategoryRepository {
   final CategoryRemoteDataSource remoteDataSource;

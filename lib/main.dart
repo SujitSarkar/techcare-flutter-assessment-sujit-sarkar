@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:take_home/app.dart';
+import 'package:finance_tracker/app.dart';
 
 void main() {
   runApp(const TakeHomeApp());

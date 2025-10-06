@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
-import 'package:take_home/core/constants/app_strings.dart';
-import 'package:take_home/domain/entities/category.dart';
-import 'package:take_home/domain/entities/transaction.dart';
-import 'package:take_home/presentation/category/bloc/category_bloc.dart';
-import 'package:take_home/presentation/transactions/bloc/transactions_bloc.dart';
-import 'package:take_home/presentation/transactions/widgets/amount_input_field.dart';
-import 'package:take_home/presentation/transactions/widgets/category_selection_chips.dart';
-import 'package:take_home/presentation/transactions/widgets/transaction_type_selector.dart';
-import 'package:take_home/utils/form_validators.dart';
+import 'package:finance_tracker/core/constants/app_strings.dart';
+import 'package:finance_tracker/domain/entities/category.dart';
+import 'package:finance_tracker/domain/entities/transaction.dart';
+import 'package:finance_tracker/presentation/category/bloc/category_bloc.dart';
+import 'package:finance_tracker/presentation/transactions/bloc/transactions_bloc.dart';
+import 'package:finance_tracker/presentation/transactions/widgets/amount_input_field.dart';
+import 'package:finance_tracker/presentation/transactions/widgets/category_selection_chips.dart';
+import 'package:finance_tracker/presentation/transactions/widgets/transaction_type_selector.dart';
+import 'package:finance_tracker/utils/form_validators.dart';
 
 class AddTransactionPage extends StatefulWidget {
   final TransactionType initialType;

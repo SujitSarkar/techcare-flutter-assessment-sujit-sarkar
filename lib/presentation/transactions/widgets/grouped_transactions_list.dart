@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import 'transaction_item.dart';
-import 'package:take_home/core/constants/app_strings.dart';
-import 'package:take_home/domain/entities/transaction.dart';
+import 'package:finance_tracker/core/constants/app_strings.dart';
+import 'package:finance_tracker/domain/entities/transaction.dart';
 
 class GroupedTransactionsList extends StatelessWidget {
   final List<Transaction> transactions;

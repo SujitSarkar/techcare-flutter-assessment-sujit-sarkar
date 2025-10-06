@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:take_home/core/decorations/app_decorations.dart';
+import 'package:finance_tracker/core/decorations/app_decorations.dart';
 
 class AnalyticsShimmer extends StatelessWidget {
   const AnalyticsShimmer({super.key});

@@ -1,8 +1,8 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
-import 'package:take_home/domain/entities/analytics.dart';
-import 'package:take_home/domain/usecases/get_analytics.dart';
+import 'package:finance_tracker/domain/entities/analytics.dart';
+import 'package:finance_tracker/domain/usecases/get_analytics.dart';
 
 part 'analytics_event.dart';
 part 'analytics_state.dart';

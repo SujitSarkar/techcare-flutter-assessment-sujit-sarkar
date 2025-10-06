@@ -1,5 +1,5 @@
-import 'package:take_home/domain/entities/analytics.dart';
-import 'package:take_home/data/models/category_model.dart';
+import 'package:finance_tracker/domain/entities/analytics.dart';
+import 'package:finance_tracker/data/models/category_model.dart';
 
 class AnalyticsSummaryModel extends AnalyticsSummary {
   const AnalyticsSummaryModel({

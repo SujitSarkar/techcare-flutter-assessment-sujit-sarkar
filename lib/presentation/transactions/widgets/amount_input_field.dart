@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'package:take_home/core/constants/app_strings.dart';
-import 'package:take_home/core/constants/app_regex.dart';
-import 'package:take_home/utils/form_validators.dart';
+import 'package:finance_tracker/core/constants/app_strings.dart';
+import 'package:finance_tracker/core/constants/app_regex.dart';
+import 'package:finance_tracker/utils/form_validators.dart';
 
 class AmountInputField extends StatefulWidget {
   final TextEditingController controller;

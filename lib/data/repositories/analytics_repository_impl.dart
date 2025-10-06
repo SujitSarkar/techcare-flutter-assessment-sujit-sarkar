@@ -1,9 +1,9 @@
-import 'package:take_home/core/utils/network_connection.dart';
-import 'package:take_home/domain/entities/analytics.dart';
-import 'package:take_home/domain/repositories/analytics_repository.dart';
-import 'package:take_home/data/datasources/analytics_remote_datasource.dart';
-import 'package:take_home/core/errors/failure.dart';
-import 'package:take_home/core/errors/result.dart';
+import 'package:finance_tracker/core/utils/network_connection.dart';
+import 'package:finance_tracker/domain/entities/analytics.dart';
+import 'package:finance_tracker/domain/repositories/analytics_repository.dart';
+import 'package:finance_tracker/data/datasources/analytics_remote_datasource.dart';
+import 'package:finance_tracker/core/errors/failure.dart';
+import 'package:finance_tracker/core/errors/result.dart';
 
 class AnalyticsRepositoryImpl implements AnalyticsRepository {
   final AnalyticsRemoteDataSource remoteDataSource;

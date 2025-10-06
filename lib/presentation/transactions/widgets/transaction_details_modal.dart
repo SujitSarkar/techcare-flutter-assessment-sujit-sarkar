@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import 'package:take_home/core/constants/app_strings.dart';
-import 'package:take_home/core/utils/utils.dart';
-import 'package:take_home/core/widgets/confirmation_dialog.dart';
-import 'package:take_home/domain/entities/transaction.dart';
+import 'package:finance_tracker/core/constants/app_strings.dart';
+import 'package:finance_tracker/core/utils/utils.dart';
+import 'package:finance_tracker/core/widgets/confirmation_dialog.dart';
+import 'package:finance_tracker/domain/entities/transaction.dart';
 
 class TransactionDetailsModal extends StatelessWidget {
   final Transaction transaction;

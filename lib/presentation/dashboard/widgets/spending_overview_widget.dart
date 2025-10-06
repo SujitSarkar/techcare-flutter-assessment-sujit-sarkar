@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:take_home/core/constants/app_strings.dart';
-import 'package:take_home/core/decorations/app_decorations.dart';
-import 'package:take_home/domain/entities/category.dart';
+import 'package:finance_tracker/core/constants/app_strings.dart';
+import 'package:finance_tracker/core/decorations/app_decorations.dart';
+import 'package:finance_tracker/domain/entities/category.dart';
 
 class SpendingOverviewWidget extends StatefulWidget {
   final Map<String, double> categorySpending;

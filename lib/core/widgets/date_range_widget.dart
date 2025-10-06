@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:take_home/core/constants/app_strings.dart';
+import 'package:finance_tracker/core/constants/app_strings.dart';
 
 class DateRangeWidget extends StatefulWidget {
   final DateTime? startDate;

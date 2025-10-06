@@ -1,11 +1,11 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:take_home/core/errors/failure.dart';
-import 'package:take_home/domain/entities/transaction.dart';
-import 'package:take_home/domain/usecases/get_transactions.dart';
-import 'package:take_home/domain/usecases/add_transaction.dart';
-import 'package:take_home/domain/usecases/update_transaction.dart';
-import 'package:take_home/domain/usecases/delete_transaction.dart';
+import 'package:finance_tracker/core/errors/failure.dart';
+import 'package:finance_tracker/domain/entities/transaction.dart';
+import 'package:finance_tracker/domain/usecases/get_transactions.dart';
+import 'package:finance_tracker/domain/usecases/add_transaction.dart';
+import 'package:finance_tracker/domain/usecases/update_transaction.dart';
+import 'package:finance_tracker/domain/usecases/delete_transaction.dart';
 
 part 'transactions_event.dart';
 part 'transactions_state.dart';

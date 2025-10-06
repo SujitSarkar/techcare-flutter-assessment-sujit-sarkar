@@ -1,12 +1,12 @@
-import 'package:take_home/data/datasources/transaction_remote_datasource.dart';
-import 'package:take_home/data/datasources/transaction_local_datasource.dart';
-import 'package:take_home/data/models/transaction_model.dart';
-import 'package:take_home/domain/entities/transaction_response.dart';
-import 'package:take_home/domain/entities/transaction.dart';
-import 'package:take_home/domain/repositories/transaction_repository.dart';
-import 'package:take_home/core/utils/network_connection.dart';
-import 'package:take_home/core/errors/failure.dart';
-import 'package:take_home/core/errors/result.dart';
+import 'package:finance_tracker/data/datasources/transaction_remote_datasource.dart';
+import 'package:finance_tracker/data/datasources/transaction_local_datasource.dart';
+import 'package:finance_tracker/data/models/transaction_model.dart';
+import 'package:finance_tracker/domain/entities/transaction_response.dart';
+import 'package:finance_tracker/domain/entities/transaction.dart';
+import 'package:finance_tracker/domain/repositories/transaction_repository.dart';
+import 'package:finance_tracker/core/utils/network_connection.dart';
+import 'package:finance_tracker/core/errors/failure.dart';
+import 'package:finance_tracker/core/errors/result.dart';
 
 class TransactionRepositoryImpl implements TransactionRepository {
   final TransactionRemoteDataSource remoteDataSource;

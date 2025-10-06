@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:take_home/core/constants/app_assets.dart';
-import 'package:take_home/core/constants/app_strings.dart';
+import 'package:finance_tracker/core/constants/app_assets.dart';
+import 'package:finance_tracker/core/constants/app_strings.dart';
 
 class DashboardHeader extends StatelessWidget {
   final int notificationCount;

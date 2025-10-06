@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:take_home/domain/usecases/get_transactions.dart';
-import 'package:take_home/domain/usecases/get_categories.dart';
-import 'package:take_home/domain/entities/transaction.dart';
-import 'package:take_home/domain/entities/category.dart';
-import 'package:take_home/presentation/transactions/bloc/transactions_bloc.dart';
+import 'package:finance_tracker/domain/usecases/get_transactions.dart';
+import 'package:finance_tracker/domain/usecases/get_categories.dart';
+import 'package:finance_tracker/domain/entities/transaction.dart';
+import 'package:finance_tracker/domain/entities/category.dart';
+import 'package:finance_tracker/presentation/transactions/bloc/transactions_bloc.dart';
 
 part 'dashboard_event.dart';
 part 'dashboard_state.dart';

@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
-import 'package:take_home/core/config/api_config.dart';
-import 'package:take_home/data/models/transaction_model.dart';
-import 'package:take_home/data/models/transaction_response_model.dart';
+import 'package:finance_tracker/core/config/api_config.dart';
+import 'package:finance_tracker/data/models/transaction_model.dart';
+import 'package:finance_tracker/data/models/transaction_response_model.dart';
 
 abstract class TransactionRemoteDataSource {
   Future<TransactionResponseModel> getTransactions({int? page, int? limit});

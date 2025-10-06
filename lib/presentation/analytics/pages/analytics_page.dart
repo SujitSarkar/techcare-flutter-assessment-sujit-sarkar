@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:take_home/core/constants/app_strings.dart';
-import 'package:take_home/core/widgets/error_widget.dart';
-import 'package:take_home/domain/entities/analytics.dart';
-import 'package:take_home/presentation/analytics/bloc/analytics_bloc.dart';
-import 'package:take_home/presentation/analytics/widgets/analytics_shimmer.dart';
-import 'package:take_home/presentation/analytics/widgets/summary_card.dart';
-import 'package:take_home/presentation/analytics/widgets/spending_trend_chart.dart';
-import 'package:take_home/presentation/analytics/widgets/category_breakdown_widget.dart';
-import 'package:take_home/presentation/analytics/widgets/budget_progress_widget.dart';
-import 'package:take_home/presentation/analytics/widgets/custom_date_range_widget.dart';
+import 'package:finance_tracker/core/constants/app_strings.dart';
+import 'package:finance_tracker/core/widgets/error_widget.dart';
+import 'package:finance_tracker/domain/entities/analytics.dart';
+import 'package:finance_tracker/presentation/analytics/bloc/analytics_bloc.dart';
+import 'package:finance_tracker/presentation/analytics/widgets/analytics_shimmer.dart';
+import 'package:finance_tracker/presentation/analytics/widgets/summary_card.dart';
+import 'package:finance_tracker/presentation/analytics/widgets/spending_trend_chart.dart';
+import 'package:finance_tracker/presentation/analytics/widgets/category_breakdown_widget.dart';
+import 'package:finance_tracker/presentation/analytics/widgets/budget_progress_widget.dart';
+import 'package:finance_tracker/presentation/analytics/widgets/custom_date_range_widget.dart';
 
 class AnalyticsPage extends StatefulWidget {
   const AnalyticsPage({super.key});

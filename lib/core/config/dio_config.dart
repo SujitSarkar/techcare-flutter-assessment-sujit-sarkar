@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart' show debugPrint;
 
-import 'package:take_home/core/config/api_config.dart';
+import 'package:finance_tracker/core/config/api_config.dart';
 
 class DioConfig {
   DioConfig._();

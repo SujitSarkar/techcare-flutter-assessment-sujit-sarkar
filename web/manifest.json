@@ -1,6 +1,6 @@
 {
-    "name": "take_home",
-    "short_name": "take_home",
+    "name": "finance_tracker",
+    "short_name": "finance_tracker",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
